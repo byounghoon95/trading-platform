@@ -155,6 +155,16 @@ Worktrees live under `.worktrees/` inside the repo root so VSCode (and any tool 
 - Merge the worktree branch into `main` only after verification passes inside that worktree.
 - Remove the worktree after merge: `git worktree remove .worktrees/<task-id>`
 
+## Pull Requests
+
+When opening a pull request, read `.github/pull_request_template.md` and use it as the PR body structure. Fill every section:
+
+- `Task` must reference the task id and file under `docs/tasks/`.
+- `Verification` must list the actual commands run inside the worktree with a one-line result summary (e.g. `pytest → 14 passed`). If a check could not be run, state why instead of leaving it blank.
+- `Scope check` and `Docs` checkboxes must reflect reality — do not check them unless the condition holds.
+
+Do not invent extra sections or skip required ones. If a section truly has nothing to say, write "n/a" with a short reason rather than deleting the heading.
+
 ## Scope Guardrails
 
 - Keep the app scope small and production-shaped.
