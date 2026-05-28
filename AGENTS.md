@@ -137,11 +137,22 @@ When updating task notes, record:
 
 All work must run inside an isolated git worktree branched from `main`, then be merged back to `main`. The only exception is the very first bootstrap commit on `main`, since a worktree requires an existing ref.
 
-- Create a worktree per task: `git worktree add ../trading-platform.<task-id> -b <branch> main`
+Worktrees live under `.worktrees/` inside the repo root so VSCode (and any tool honoring `git.repositoryScanMaxDepth`) picks them up automatically. The `.worktrees/` directory itself is gitignored on `main`.
+
+- Create a worktree per task: `git worktree add .worktrees/<task-id> -b <branch> main`
+- Bind shared project config to the root copy so updates propagate to every live worktree without re-creating them:
+
+  ```sh
+  rm -rf .worktrees/<task-id>/.codex
+  ln -s ../../.codex .worktrees/<task-id>/.codex
+  ```
+
+  Do this once per worktree right after `git worktree add`. The symlink resolves to the root `.codex/`, which always reflects `main`, so a merged skill or AGENTS update is visible inside every existing worktree immediately.
+- Exception: if the task itself edits `.codex/` (a skill change, a Codex config change), skip the symlink step so the worktree keeps its own real copy on the feature branch.
 - Do all editing, verification (lint/test/build), and commits inside the worktree.
 - When two or more tasks have no shared state or sequential dependency, run them in parallel in separate worktrees. Do not edit the same files from multiple worktrees at the same time. If tasks share files or one depends on the other's output, do them sequentially.
 - Merge the worktree branch into `main` only after verification passes inside that worktree.
-- Remove the worktree after merge: `git worktree remove ../trading-platform.<task-id>`
+- Remove the worktree after merge: `git worktree remove .worktrees/<task-id>`
 
 ## Target Stack
 
