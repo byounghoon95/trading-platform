@@ -7,17 +7,25 @@ This repository is a portfolio project for a compact trading market dashboard.
 Before implementing any task, read:
 
 - `docs/spec.md`
-- `docs/tasks/README.md` if it exists
+- `docs/tasks/README.md`
 - The requested task file under `docs/tasks/`
+- The track-local `AGENTS.md` for the area you are editing:
+  - `apps/backend/AGENTS.md` for backend work
+  - `apps/frontend/AGENTS.md` for frontend work
+  - `infra/AGENTS.md` for Docker, Kubernetes, and CI work
 - Any task-specific spec referenced by the user
+
+Track-local `AGENTS.md` files hold stack, coding standards, and verification rules for that area. This root file holds only cross-cutting rules.
 
 ## Behavioral Guidelines
 
-These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
+
+**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
 ### 1. Think Before Coding
 
-Don't assume. Don't hide confusion. Surface tradeoffs.
+**Don't assume. Don't hide confusion. Surface tradeoffs.**
 
 Before implementing:
 
@@ -28,7 +36,7 @@ Before implementing:
 
 ### 2. Simplicity First
 
-Minimum code that solves the problem. Nothing speculative.
+**Minimum code that solves the problem. Nothing speculative.**
 
 - No features beyond what was asked.
 - No abstractions for single-use code.
@@ -40,7 +48,7 @@ Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, sim
 
 ### 3. Surgical Changes
 
-Touch only what you must. Clean up only your own mess.
+**Touch only what you must. Clean up only your own mess.**
 
 When editing existing code:
 
@@ -58,7 +66,7 @@ The test: every changed line should trace directly to the user's request.
 
 ### 4. Goal-Driven Execution
 
-Define success criteria. Loop until verified.
+**Define success criteria. Loop until verified.**
 
 Transform tasks into verifiable goals:
 
@@ -74,9 +82,11 @@ For multi-step tasks, state a brief plan:
 3. [Step] → verify: [check]
 ```
 
-Strong success criteria let the agent loop independently. Weak criteria ("make it work") require constant clarification.
+Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
-These guidelines are working if: fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+---
+
+**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
 
 ## Skill Usage
 
@@ -124,15 +134,6 @@ When updating task notes, record:
 - Important skill-specific decisions
 - Any verification that the skill required
 
-## Working Rules
-
-- Keep the app scope small and production-shaped.
-- Do not add login, signup, trading orders, payments, admin pages, or large unrelated features unless explicitly requested.
-- Prefer completing one task at a time.
-- Stay inside the task scope and acceptance criteria.
-- Update docs when a task changes architecture, APIs, infrastructure, or development workflow.
-- Do not introduce a database in the MVP unless the task explicitly asks for it.
-
 ## Work With Worktrees
 
 All work must run inside an isolated git worktree branched from `main`, then be merged back to `main`. The only exception is the very first bootstrap commit on `main`, since a worktree requires an existing ref.
@@ -154,81 +155,11 @@ Worktrees live under `.worktrees/` inside the repo root so VSCode (and any tool 
 - Merge the worktree branch into `main` only after verification passes inside that worktree.
 - Remove the worktree after merge: `git worktree remove .worktrees/<task-id>`
 
-## Target Stack
+## Scope Guardrails
 
-Default choices unless the user changes them:
-
-- Frontend: React + Vite + JavaScript
-- Charting: Lightweight Charts
-- Backend: FastAPI + Python
-- Cache: Redis
-- Market data: Binance public API
-- Local runtime: Docker Compose
-- Deployment: k3s
-- CI/CD: GitHub Actions
-- Registry: GitHub Container Registry
-
-## Architecture Direction
-
-MVP flow:
-
-```text
-Browser
-  -> Frontend
-  -> Backend API
-  -> Redis cache
-  -> Binance public API
-```
-
-Deployment flow:
-
-```text
-GitHub Actions
-  -> test/build
-  -> push container images
-  -> deploy to k3s or update deployment manifests
-```
-
-## Coding Standards
-
-- Use JavaScript for frontend.
-- Use Python for backend.
-- Keep API responses normalized and frontend-friendly.
-- Validate external inputs such as `symbol`, `interval`, and `limit`.
-- Handle loading, error, empty, and disconnected states in the UI.
-- Prefer clear module boundaries over premature abstraction.
-- Add tests around data normalization, validation, and API behavior.
-
-## Verification
-
-For each implementation task, run the relevant checks before finishing.
-
-Expected checks may include:
-
-- frontend lint/test/build
-- backend lint/test
-- Docker image build
-- Docker Compose smoke test
-- Kubernetes manifest validation when infra files are changed
-
-If a check cannot be run, state why in the final response.
-
-## Documentation Expectations
-
-Keep documentation practical and interview-ready.
-
-Document:
-
-- API shape
-- architecture changes
-- environment variables
-- local run commands
-- deployment commands
-- operational tradeoffs
-- troubleshooting notes
-
-Avoid:
-
-- marketing copy
-- broad future features that are not part of the MVP
-- undocumented infrastructure assumptions
+- Keep the app scope small and production-shaped.
+- Do not add login, signup, trading orders, payments, admin pages, or large unrelated features unless explicitly requested.
+- Prefer completing one task at a time.
+- Stay inside the task scope and acceptance criteria.
+- Do not introduce a database in the MVP unless the task explicitly asks for it.
+- Update docs when a task changes architecture, APIs, infrastructure, or development workflow.
