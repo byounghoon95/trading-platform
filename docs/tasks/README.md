@@ -1,0 +1,77 @@
+# Tasks
+
+Task specs are split by track so backend, frontend, and infrastructure work can move in parallel when dependencies allow it.
+
+Use:
+
+```text
+$writing-plans backend TASK-01
+$implement-task backend TASK-01
+$requesting-code-review backend TASK-01
+$implement-task frontend TASK-02
+$implement-task infra TASK-03
+```
+
+Use `$brainstorming` when changing `docs/spec.md` or designing a new feature.
+Use `$writing-plans` to refine a task before implementation.
+Use `$implement-task` to execute one task.
+Use `$requesting-code-review` to review a completed task.
+
+## Status Values
+
+- `todo`: not started
+- `doing`: currently being implemented
+- `done`: completed and verified
+- `blocked`: cannot continue without a decision or external dependency
+
+## Index
+
+| Track Task | Depends On | File |
+| --- | --- | --- |
+| foundation TASK-01 | none | [01-repository-structure.md](foundation/01-repository-structure.md) |
+| frontend TASK-01 | foundation TASK-01 | [01-frontend-scaffold.md](frontend/01-frontend-scaffold.md) |
+| frontend TASK-02 | frontend TASK-01 | [02-frontend-mocked-candle-chart.md](frontend/02-frontend-mocked-candle-chart.md) |
+| frontend TASK-03 | backend TASK-04, backend TASK-06, frontend TASK-02 | [03-frontend-candle-api.md](frontend/03-frontend-candle-api.md) |
+| backend TASK-01 | foundation TASK-01 | [01-backend-scaffold.md](backend/01-backend-scaffold.md) |
+| backend TASK-02 | backend TASK-01 | [02-backend-health-endpoint.md](backend/02-backend-health-endpoint.md) |
+| backend TASK-03 | backend TASK-01 | [03-binance-candle-client.md](backend/03-binance-candle-client.md) |
+| backend TASK-04 | backend TASK-02, backend TASK-03 | [04-normalized-candle-endpoint.md](backend/04-normalized-candle-endpoint.md) |
+| backend TASK-05 | backend TASK-04 | [05-redis-candle-caching.md](backend/05-redis-candle-caching.md) |
+| backend TASK-06 | backend TASK-03 | [06-market-ticker-endpoints.md](backend/06-market-ticker-endpoints.md) |
+| infra TASK-01 | foundation TASK-01 | [01-docker-compose-baseline.md](infra/01-docker-compose-baseline.md) |
+| infra TASK-02 | frontend TASK-01, backend TASK-01 | [02-production-dockerfiles.md](infra/02-production-dockerfiles.md) |
+| infra TASK-03 | infra TASK-01, infra TASK-02 | [03-k3s-manifests.md](infra/03-k3s-manifests.md) |
+| infra TASK-04 | frontend TASK-01, backend TASK-01 | [04-github-actions-ci.md](infra/04-github-actions-ci.md) |
+| infra TASK-05 | infra TASK-02, infra TASK-03, infra TASK-04 | [05-image-build-deploy-workflow.md](infra/05-image-build-deploy-workflow.md) |
+| backend TASK-07 | backend TASK-06 | [07-websocket-price-stream.md](backend/07-websocket-price-stream.md) |
+| frontend TASK-04 | frontend TASK-03, backend TASK-07 | [04-websocket-price-client.md](frontend/04-websocket-price-client.md) |
+| infra TASK-06 | backend TASK-04, backend TASK-06, infra TASK-03 | [06-metrics-prometheus.md](infra/06-metrics-prometheus.md) |
+| infra TASK-07 | infra TASK-06 | [07-grafana-dashboard.md](infra/07-grafana-dashboard.md) |
+| infra TASK-08 | infra TASK-03 | [08-https-cert-manager.md](infra/08-https-cert-manager.md) |
+| infra TASK-09 | infra TASK-05, infra TASK-08 | [09-k3s-deploy-automation.md](infra/09-k3s-deploy-automation.md) |
+| portfolio TASK-01 | frontend TASK-04, backend TASK-05, backend TASK-07, infra TASK-06, infra TASK-07, infra TASK-08, infra TASK-09 | [01-final-readme-portfolio-docs.md](portfolio/01-final-readme-portfolio-docs.md) |
+
+## Parallel Work
+
+After `foundation TASK-01`, these tracks can move independently:
+
+- Backend: `backend TASK-01 -> backend TASK-02/backend TASK-03 -> backend TASK-04/backend TASK-06 -> backend TASK-05`
+- Backend advanced: `backend TASK-07` adds WebSocket streaming after ticker endpoints are stable
+- Frontend: `frontend TASK-01 -> frontend TASK-02`, then wait for `backend TASK-04` and `backend TASK-06` before `frontend TASK-03`; `frontend TASK-04` adds WebSocket UI after backend streaming
+- Infra: `infra TASK-01`, then `infra TASK-02/infra TASK-04`, then `infra TASK-03/infra TASK-05`; metrics waits for backend API endpoints, then Grafana/HTTPS/deploy automation follow
+
+## Suggested Flow
+
+```text
+foundation TASK-01
+  |
+  +--> backend:  TASK-01 -> TASK-02 -> TASK-03 -> TASK-04 -> TASK-05
+  |                                      \-----> TASK-06 -> TASK-07
+  +--> frontend: TASK-01 -> TASK-02 ------------------------> TASK-03 -> TASK-04
+  +--> infra:    TASK-01 -> TASK-02 -> TASK-03 -> TASK-05 -> TASK-09
+  |                        TASK-04 ----------^
+  |                        backend TASK-04/TASK-06 -> infra TASK-06 -> TASK-07
+  |                                                 \-----> TASK-08 ----^
+  |
+  +--> portfolio: TASK-01
+```
