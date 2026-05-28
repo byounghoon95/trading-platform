@@ -137,11 +137,13 @@ When updating task notes, record:
 
 All work must run inside an isolated git worktree branched from `main`, then be merged back to `main`. The only exception is the very first bootstrap commit on `main`, since a worktree requires an existing ref.
 
-- Create a worktree per task: `git worktree add ../trading-platform.<task-id> -b <branch> main`
+Worktrees live under `.worktrees/` inside the repo root so VSCode (and any tool honoring `git.repositoryScanMaxDepth`) picks them up automatically. The `.worktrees/` directory itself is gitignored on `main`.
+
+- Create a worktree per task: `git worktree add .worktrees/<task-id> -b <branch> main`
 - Do all editing, verification (lint/test/build), and commits inside the worktree.
 - When two or more tasks have no shared state or sequential dependency, run them in parallel in separate worktrees. Do not edit the same files from multiple worktrees at the same time. If tasks share files or one depends on the other's output, do them sequentially.
 - Merge the worktree branch into `main` only after verification passes inside that worktree.
-- Remove the worktree after merge: `git worktree remove ../trading-platform.<task-id>`
+- Remove the worktree after merge: `git worktree remove .worktrees/<task-id>`
 
 ## Target Stack
 
