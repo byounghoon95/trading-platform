@@ -30,14 +30,3 @@ Create the base monorepo folders for frontend, backend, infrastructure, and docu
 
 - `find . -maxdepth 3 -type d | sort`
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started

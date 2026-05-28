@@ -33,14 +33,3 @@ Cache candle API responses in Redis to reduce external API calls.
 
 - `pytest`
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started

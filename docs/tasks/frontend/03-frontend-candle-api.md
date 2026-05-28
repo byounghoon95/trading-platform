@@ -51,14 +51,3 @@ Load market, candle, and ticker data from the backend and render the live dashbo
 
 - `npm run build`
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started

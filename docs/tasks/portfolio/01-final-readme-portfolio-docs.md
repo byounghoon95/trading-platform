@@ -50,14 +50,3 @@ Create the final README and portfolio-ready documentation.
 
 - Manual documentation review
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started

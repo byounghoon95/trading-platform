@@ -31,14 +31,3 @@ Expose normalized candle data through the backend API.
 
 - `pytest`
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started

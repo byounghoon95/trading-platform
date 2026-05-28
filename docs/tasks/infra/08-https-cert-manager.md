@@ -38,14 +38,3 @@ Add production-style HTTPS ingress support for the k3s deployment using cert-man
 - `kubectl apply --dry-run=client -f infra/k8s`
 - Manual documentation review
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started

@@ -35,14 +35,3 @@ Add Kubernetes manifests for deploying frontend, backend, and Redis to k3s.
 
 - `kubectl apply --dry-run=client -f infra/k8s`
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started

@@ -41,14 +41,3 @@ Automate or clearly formalize deployment from GitHub Actions to the k3s cluster.
 - Review GitHub Actions workflow syntax
 - `kubectl rollout status deployment/<name> -n <namespace>` after deployment when a cluster is available
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started

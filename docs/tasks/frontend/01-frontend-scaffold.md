@@ -31,15 +31,3 @@ Create a React + Vite + JavaScript frontend app under `apps/frontend`.
 
 - `npm run build`
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started
-

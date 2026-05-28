@@ -31,15 +31,3 @@ Add a local Docker Compose setup for frontend, backend, and Redis.
 
 - `docker compose config`
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started
-

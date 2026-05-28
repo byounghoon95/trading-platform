@@ -44,14 +44,3 @@ Add a backend WebSocket stream for normalized ticker updates after the HTTP tick
 - `pytest`
 - Manual WebSocket smoke test
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started

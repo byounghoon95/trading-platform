@@ -42,14 +42,3 @@ Use the backend WebSocket stream for current price updates while keeping polling
 - `npm run build`
 - Manual WebSocket smoke test
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started

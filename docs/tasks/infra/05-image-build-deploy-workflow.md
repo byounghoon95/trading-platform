@@ -37,14 +37,3 @@ Add GitHub Actions workflow for building container images, pushing them to GitHu
 
 - Review workflow syntax locally if tooling is available.
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started

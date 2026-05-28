@@ -43,14 +43,3 @@ Expose backend operational metrics and provide Prometheus scrape configuration f
 - `curl http://localhost:<backend-port>/metrics`
 - `kubectl apply --dry-run=client -f infra/k8s`
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started

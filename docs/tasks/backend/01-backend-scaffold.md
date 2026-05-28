@@ -32,14 +32,3 @@ Create a FastAPI + Python backend app under `apps/backend`.
 - `pytest`
 - `ruff check .`
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started

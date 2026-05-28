@@ -33,15 +33,3 @@ Add CI workflow for frontend and backend checks.
 
 - Review workflow syntax locally if tooling is available.
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started
-

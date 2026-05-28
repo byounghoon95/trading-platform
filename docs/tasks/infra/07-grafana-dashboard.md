@@ -38,14 +38,3 @@ Add a Grafana dashboard or dashboard documentation for the main operational sign
 - Manual dashboard JSON review
 - Manual documentation review
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started

@@ -30,15 +30,3 @@ Add production-oriented Dockerfiles for frontend and backend.
 
 - `docker build`
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started
-

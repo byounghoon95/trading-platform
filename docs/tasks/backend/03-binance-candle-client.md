@@ -36,14 +36,3 @@ Create a backend client that fetches candle and 24h ticker data from Binance pub
 
 - `pytest`
 
-## Skills
-
-- Required: implement-task
-- Optional: none
-
-## Completion Notes
-
-- Status: todo
-- Skills used: none
-- Verification: not run
-- Notes: not started
