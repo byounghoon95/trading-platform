@@ -2,7 +2,7 @@
 
 ## Status
 
-todo
+done
 
 ## Goal
 
@@ -31,3 +31,10 @@ Create a React + Vite + JavaScript frontend app under `apps/frontend`.
 
 - `npm run build`
 
+## Completion Notes
+
+- Status: done
+- Skills used: implement-task, requesting-code-review
+- Changed: created a React + Vite JavaScript frontend scaffold with a dashboard-first shell, package scripts, lint config, and frontend ignore rules.
+- Verification: `npm run lint` passed; `npm run build` passed; test not run because no test script is configured for this scaffold task.
+- Notes: kept the UI static and did not add API calls or chart rendering; post-implementation review found and fixed viewport-based heading font scaling.
