@@ -136,7 +136,7 @@ When updating task notes, record:
 
 ## Work With Worktrees
 
-All work must run inside an isolated git worktree branched from `main`, then be merged back to `main`. The only exception is the very first bootstrap commit on `main`, since a worktree requires an existing ref.
+All work must run inside an isolated git worktree branched from `main`, then be proposed back to `main` through a PR/MR. Do not merge task branches directly into `main` unless the user explicitly asks for that. The only exception is the very first bootstrap commit on `main`, since a worktree requires an existing ref.
 
 Worktrees live under `.worktrees/` inside the repo root so VSCode (and any tool honoring `git.repositoryScanMaxDepth`) picks them up automatically. The `.worktrees/` directory itself is gitignored on `main`.
 
@@ -145,8 +145,9 @@ Worktrees live under `.worktrees/` inside the repo root so VSCode (and any tool 
 - Worktrees are short-lived. If a `.codex/` update on `main` needs to reach a live worktree, run `git merge main` inside the worktree.
 - Do all editing, verification (lint/test/build), and commits inside the worktree.
 - When two or more tasks have no shared state or sequential dependency, run them in parallel in separate worktrees. Do not edit the same files from multiple worktrees at the same time. If tasks share files or one depends on the other's output, do them sequentially.
-- Merge the worktree branch into `main` only after verification passes inside that worktree.
-- Remove the worktree after merge: `git worktree remove .worktrees/<task-id>`
+- After verification passes, push the worktree branch and open a PR/MR targeting `main`.
+- Keep local `main` unchanged except for normal sync operations such as `git fetch` or fast-forward pulls requested by the user.
+- Remove the worktree after the PR/MR is opened or when the user says the local task workspace is no longer needed: `git worktree remove .worktrees/<task-id>`
 
 ## Pull Requests
 
