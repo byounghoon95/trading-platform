@@ -48,7 +48,7 @@ Status values come from `## Status Values` above. Update this column **and** the
 | Track Task | Status | Depends On | File |
 | --- | --- | --- | --- |
 | foundation TASK-01 | ✅ done | none | [01-repository-structure.md](foundation/01-repository-structure.md) |
-| frontend TASK-01 | ⬜ todo | foundation TASK-01 | [01-frontend-scaffold.md](frontend/01-frontend-scaffold.md) |
+| frontend TASK-01 | ✅ done | foundation TASK-01 | [01-frontend-scaffold.md](frontend/01-frontend-scaffold.md) |
 | frontend TASK-02 | ⬜ todo | frontend TASK-01 | [02-frontend-mocked-candle-chart.md](frontend/02-frontend-mocked-candle-chart.md) |
 | frontend TASK-03 | ⬜ todo | backend TASK-04, backend TASK-06, frontend TASK-02 | [03-frontend-candle-api.md](frontend/03-frontend-candle-api.md) |
 | backend TASK-01 | ⬜ todo | foundation TASK-01 | [01-backend-scaffold.md](backend/01-backend-scaffold.md) |
