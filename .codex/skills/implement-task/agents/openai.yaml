@@ -1,0 +1,4 @@
+interface:
+  display_name: "Implement Task"
+  short_description: "Implement a scoped project task from specs"
+  default_prompt: "Use $implement-task backend TASK-01 to implement one track-scoped project task, staying within scope and updating status notes."
