@@ -19,10 +19,12 @@ Use `$requesting-code-review` to review a completed task.
 
 ## Status Values
 
-- `todo`: not started
-- `doing`: currently being implemented
-- `done`: completed and verified
-- `blocked`: cannot continue without a decision or external dependency
+Each row in the Index uses a leading icon plus the status word so the table scans quickly.
+
+- ⬜ `todo`: not started
+- 🟡 `doing`: currently being implemented
+- ✅ `done`: completed and verified
+- ⛔ `blocked`: cannot continue without a decision or external dependency
 
 ## Defaults
 
@@ -45,28 +47,28 @@ Status values come from `## Status Values` above. Update this column **and** the
 
 | Track Task | Status | Depends On | File |
 | --- | --- | --- | --- |
-| foundation TASK-01 | todo | none | [01-repository-structure.md](foundation/01-repository-structure.md) |
-| frontend TASK-01 | todo | foundation TASK-01 | [01-frontend-scaffold.md](frontend/01-frontend-scaffold.md) |
-| frontend TASK-02 | todo | frontend TASK-01 | [02-frontend-mocked-candle-chart.md](frontend/02-frontend-mocked-candle-chart.md) |
-| frontend TASK-03 | todo | backend TASK-04, backend TASK-06, frontend TASK-02 | [03-frontend-candle-api.md](frontend/03-frontend-candle-api.md) |
-| backend TASK-01 | todo | foundation TASK-01 | [01-backend-scaffold.md](backend/01-backend-scaffold.md) |
-| backend TASK-02 | todo | backend TASK-01 | [02-backend-health-endpoint.md](backend/02-backend-health-endpoint.md) |
-| backend TASK-03 | todo | backend TASK-01 | [03-binance-candle-client.md](backend/03-binance-candle-client.md) |
-| backend TASK-04 | todo | backend TASK-02, backend TASK-03 | [04-normalized-candle-endpoint.md](backend/04-normalized-candle-endpoint.md) |
-| backend TASK-05 | todo | backend TASK-04 | [05-redis-candle-caching.md](backend/05-redis-candle-caching.md) |
-| backend TASK-06 | todo | backend TASK-03 | [06-market-ticker-endpoints.md](backend/06-market-ticker-endpoints.md) |
-| infra TASK-01 | todo | foundation TASK-01 | [01-docker-compose-baseline.md](infra/01-docker-compose-baseline.md) |
-| infra TASK-02 | todo | frontend TASK-01, backend TASK-01 | [02-production-dockerfiles.md](infra/02-production-dockerfiles.md) |
-| infra TASK-03 | todo | infra TASK-01, infra TASK-02 | [03-k3s-manifests.md](infra/03-k3s-manifests.md) |
-| infra TASK-04 | todo | frontend TASK-01, backend TASK-01 | [04-github-actions-ci.md](infra/04-github-actions-ci.md) |
-| infra TASK-05 | todo | infra TASK-02, infra TASK-03, infra TASK-04 | [05-image-build-deploy-workflow.md](infra/05-image-build-deploy-workflow.md) |
-| backend TASK-07 | todo | backend TASK-06 | [07-websocket-price-stream.md](backend/07-websocket-price-stream.md) |
-| frontend TASK-04 | todo | frontend TASK-03, backend TASK-07 | [04-websocket-price-client.md](frontend/04-websocket-price-client.md) |
-| infra TASK-06 | todo | backend TASK-04, backend TASK-06, infra TASK-03 | [06-metrics-prometheus.md](infra/06-metrics-prometheus.md) |
-| infra TASK-07 | todo | infra TASK-06 | [07-grafana-dashboard.md](infra/07-grafana-dashboard.md) |
-| infra TASK-08 | todo | infra TASK-03 | [08-https-cert-manager.md](infra/08-https-cert-manager.md) |
-| infra TASK-09 | todo | infra TASK-05, infra TASK-08 | [09-k3s-deploy-automation.md](infra/09-k3s-deploy-automation.md) |
-| portfolio TASK-01 | todo | frontend TASK-04, backend TASK-05, backend TASK-07, infra TASK-06, infra TASK-07, infra TASK-08, infra TASK-09 | [01-final-readme-portfolio-docs.md](portfolio/01-final-readme-portfolio-docs.md) |
+| foundation TASK-01 | ✅ done | none | [01-repository-structure.md](foundation/01-repository-structure.md) |
+| frontend TASK-01 | ⬜ todo | foundation TASK-01 | [01-frontend-scaffold.md](frontend/01-frontend-scaffold.md) |
+| frontend TASK-02 | ⬜ todo | frontend TASK-01 | [02-frontend-mocked-candle-chart.md](frontend/02-frontend-mocked-candle-chart.md) |
+| frontend TASK-03 | ⬜ todo | backend TASK-04, backend TASK-06, frontend TASK-02 | [03-frontend-candle-api.md](frontend/03-frontend-candle-api.md) |
+| backend TASK-01 | ⬜ todo | foundation TASK-01 | [01-backend-scaffold.md](backend/01-backend-scaffold.md) |
+| backend TASK-02 | ⬜ todo | backend TASK-01 | [02-backend-health-endpoint.md](backend/02-backend-health-endpoint.md) |
+| backend TASK-03 | ⬜ todo | backend TASK-01 | [03-binance-candle-client.md](backend/03-binance-candle-client.md) |
+| backend TASK-04 | ⬜ todo | backend TASK-02, backend TASK-03 | [04-normalized-candle-endpoint.md](backend/04-normalized-candle-endpoint.md) |
+| backend TASK-05 | ⬜ todo | backend TASK-04 | [05-redis-candle-caching.md](backend/05-redis-candle-caching.md) |
+| backend TASK-06 | ⬜ todo | backend TASK-03 | [06-market-ticker-endpoints.md](backend/06-market-ticker-endpoints.md) |
+| infra TASK-01 | ⬜ todo | foundation TASK-01 | [01-docker-compose-baseline.md](infra/01-docker-compose-baseline.md) |
+| infra TASK-02 | ⬜ todo | frontend TASK-01, backend TASK-01 | [02-production-dockerfiles.md](infra/02-production-dockerfiles.md) |
+| infra TASK-03 | ⬜ todo | infra TASK-01, infra TASK-02 | [03-k3s-manifests.md](infra/03-k3s-manifests.md) |
+| infra TASK-04 | ⬜ todo | frontend TASK-01, backend TASK-01 | [04-github-actions-ci.md](infra/04-github-actions-ci.md) |
+| infra TASK-05 | ⬜ todo | infra TASK-02, infra TASK-03, infra TASK-04 | [05-image-build-deploy-workflow.md](infra/05-image-build-deploy-workflow.md) |
+| backend TASK-07 | ⬜ todo | backend TASK-06 | [07-websocket-price-stream.md](backend/07-websocket-price-stream.md) |
+| frontend TASK-04 | ⬜ todo | frontend TASK-03, backend TASK-07 | [04-websocket-price-client.md](frontend/04-websocket-price-client.md) |
+| infra TASK-06 | ⬜ todo | backend TASK-04, backend TASK-06, infra TASK-03 | [06-metrics-prometheus.md](infra/06-metrics-prometheus.md) |
+| infra TASK-07 | ⬜ todo | infra TASK-06 | [07-grafana-dashboard.md](infra/07-grafana-dashboard.md) |
+| infra TASK-08 | ⬜ todo | infra TASK-03 | [08-https-cert-manager.md](infra/08-https-cert-manager.md) |
+| infra TASK-09 | ⬜ todo | infra TASK-05, infra TASK-08 | [09-k3s-deploy-automation.md](infra/09-k3s-deploy-automation.md) |
+| portfolio TASK-01 | ⬜ todo | frontend TASK-04, backend TASK-05, backend TASK-07, infra TASK-06, infra TASK-07, infra TASK-08, infra TASK-09 | [01-final-readme-portfolio-docs.md](portfolio/01-final-readme-portfolio-docs.md) |
 
 ## Parallel Work
 

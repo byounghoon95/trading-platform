@@ -2,7 +2,7 @@
 
 ## Status
 
-todo
+done
 
 ## Goal
 
@@ -29,4 +29,12 @@ Create the base monorepo folders for frontend, backend, infrastructure, and docu
 ## Verification
 
 - `find . -maxdepth 3 -type d | sort`
+
+## Completion Notes
+
+- Status: done
+- Skills used: implement-task
+- Changed: created `apps/frontend`, `apps/backend`, `infra/docker`, `infra/k8s` with `.gitkeep` placeholders
+- Verification: `find . -maxdepth 3 -type d | sort` — all four target directories present
+- Notes: no scaffolding or dependencies added per scope
 
