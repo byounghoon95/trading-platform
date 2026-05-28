@@ -2,7 +2,7 @@
 
 ## Status
 
-todo
+done
 
 ## Goal
 
@@ -32,3 +32,10 @@ Render a candlestick chart in the frontend using mocked candle data.
 
 - `npm run build`
 
+## Completion Notes
+
+- Status: done
+- Skills used: implement-task, requesting-code-review
+- Changed: added Lightweight Charts, mocked candle data, responsive candle chart, volume histogram, and MA 5 / MA 20 overlays.
+- Verification: `npm run lint` -> passed; `npm run build` -> passed; `npm test` -> not run because no test script is configured.
+- Notes: chart data remains mocked and does not call the backend API; Lightweight Charts attribution is left enabled.
