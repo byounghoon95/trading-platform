@@ -2,7 +2,7 @@
 
 ## Status
 
-todo
+done
 
 ## Goal
 
@@ -32,3 +32,10 @@ Create a FastAPI + Python backend app under `apps/backend`.
 - `pytest`
 - `ruff check .`
 
+## Completion Notes
+
+- Status: done
+- Skills used: implement-task
+- Changed: added FastAPI backend scaffold, local settings structure, backend project metadata, and import-focused tests
+- Verification: `uv run --extra dev pytest` -> 2 passed; `uv run --extra dev ruff check .` -> all checks passed
+- Notes: no health endpoint, Binance integration, Redis, or WebSocket behavior was added
