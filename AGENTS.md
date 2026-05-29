@@ -149,6 +149,74 @@ Worktrees live under `.worktrees/` inside the repo root so VSCode (and any tool 
 - Keep local `main` unchanged except for normal sync operations such as `git fetch` or fast-forward pulls requested by the user.
 - Remove the worktree after the PR/MR is opened or when the user says the local task workspace is no longer needed: `git worktree remove .worktrees/<task-id>`
 
+## Git Conventions
+
+Use predictable branch names, commit messages, and PR titles so task history stays easy to scan.
+
+### Branch Names
+
+Branch names should use lowercase kebab-case:
+
+```text
+<type>/<scope>-<short-description>
+```
+
+Allowed `type` values:
+
+- `feature`: user-facing feature work
+- `fix`: bug fixes
+- `docs`: documentation-only changes
+- `chore`: maintenance that does not change app behavior
+- `infra`: Docker, Kubernetes, CI/CD, and deployment changes
+- `refactor`: behavior-preserving code structure changes
+- `test`: test-only changes
+
+Use the task track as `scope` when the work maps to a task, such as `backend`, `frontend`, `infra`, `foundation`, or `portfolio`.
+
+Examples:
+
+- `feature/frontend-candle-api`
+- `fix/backend-ticker-validation`
+- `infra/github-actions-ci`
+- `docs/git-conventions`
+
+### Commit Messages
+
+Commit messages should follow Conventional Commits:
+
+```text
+<type>(<scope>): <imperative summary>
+```
+
+Rules:
+
+- Use the same `type` values allowed for branch names.
+- Use a short, imperative summary: `add`, `fix`, `document`, `remove`, `update`.
+- Keep the first line under 72 characters when practical.
+- Add a body only when the why or tradeoff is not obvious from the diff.
+- Reference task IDs in the body when the work maps to a task, not in the summary.
+
+Examples:
+
+- `feature(frontend): add candle API integration`
+- `fix(backend): validate ticker symbol query`
+- `infra(ci): add backend test workflow`
+- `docs(agents): document git conventions`
+
+### PR Titles
+
+PR titles should mirror the final squashed commit title:
+
+```text
+<type>(<scope>): <imperative summary>
+```
+
+Examples:
+
+- `feature(frontend): add candle API integration`
+- `infra(k3s): add baseline deployment manifests`
+- `docs(agents): document git conventions`
+
 ## Pull Requests
 
 When opening a pull request, read `.github/pull_request_template.md` and use it as the PR body structure. Fill every section:
