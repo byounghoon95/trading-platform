@@ -51,7 +51,7 @@ Status values come from `## Status Values` above. Update this column **and** the
 | frontend TASK-01 | ✅ done | foundation TASK-01 | [01-frontend-scaffold.md](frontend/01-frontend-scaffold.md) |
 | frontend TASK-02 | ✅ done | frontend TASK-01 | [02-frontend-mocked-candle-chart.md](frontend/02-frontend-mocked-candle-chart.md) |
 | frontend TASK-03 | ⬜ todo | backend TASK-04, backend TASK-06, frontend TASK-02 | [03-frontend-candle-api.md](frontend/03-frontend-candle-api.md) |
-| backend TASK-01 | ⬜ todo | foundation TASK-01 | [01-backend-scaffold.md](backend/01-backend-scaffold.md) |
+| backend TASK-01 | ✅ done | foundation TASK-01 | [01-backend-scaffold.md](backend/01-backend-scaffold.md) |
 | backend TASK-02 | ⬜ todo | backend TASK-01 | [02-backend-health-endpoint.md](backend/02-backend-health-endpoint.md) |
 | backend TASK-03 | ⬜ todo | backend TASK-01 | [03-binance-candle-client.md](backend/03-binance-candle-client.md) |
 | backend TASK-04 | ⬜ todo | backend TASK-02, backend TASK-03 | [04-normalized-candle-endpoint.md](backend/04-normalized-candle-endpoint.md) |
