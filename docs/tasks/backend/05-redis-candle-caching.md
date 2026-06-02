@@ -2,7 +2,7 @@
 
 ## Status
 
-todo
+done
 
 ## Goal
 
@@ -33,3 +33,10 @@ Cache candle API responses in Redis to reduce external API calls.
 
 - `pytest`
 
+## Completion Notes
+
+- Status: done
+- Skills used: implement-task, requesting-code-review
+- Changed: added Redis candle cache client, Redis readiness check, candle service cache orchestration, Redis dependency metadata, and focused backend tests
+- Verification: `.venv/bin/python -m pytest` -> 21 passed; `.venv/bin/ruff check .` -> all checks passed
+- Notes: `/health` remains liveness-only; `/ready` now fails with HTTP 503 when Redis is unreachable. Cache read/write failures fall back to Binance so readiness, not the candle route, owns dependency gating. Local code review found no blocking issues.
