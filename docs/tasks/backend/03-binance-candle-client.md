@@ -2,7 +2,7 @@
 
 ## Status
 
-todo
+done
 
 ## Goal
 
@@ -36,3 +36,10 @@ Create a backend client that fetches candle and 24h ticker data from Binance pub
 
 - `pytest`
 
+## Completion Notes
+
+- Status: done
+- Skills used: implement-task
+- Changed: added a Binance HTTP client with supported symbol/interval validation, candle and 24h ticker DTO normalization, bounded 429/418 retry with exponential backoff, and focused client tests.
+- Verification: `.venv/bin/python -m pytest` -> 10 passed; `.venv/bin/ruff check .` -> all checks passed.
+- Notes: kept public API endpoints, Redis caching, and WebSocket streaming out of scope.
