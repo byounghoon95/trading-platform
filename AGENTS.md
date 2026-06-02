@@ -205,7 +205,7 @@ Examples:
 
 ### PR Titles
 
-PR titles should include the task id in the scope:
+PR titles for task-backed work should include the task id in the scope:
 
 ```text
 <type>(<track-task-id>): <imperative summary>
@@ -213,11 +213,17 @@ PR titles should include the task id in the scope:
 
 Use lowercase task ids in the scope, combining the task track and task number.
 
+For PRs that do not map to a task file, omit the scope:
+
+```text
+<type>: <imperative summary>
+```
+
 Examples:
 
 - `feature(frontend-task-02): add candle API integration`
 - `infra(infra-task-01): add baseline deployment manifests`
-- `docs(infra-task-01): document deployment conventions`
+- `docs: update pr title convention`
 
 ## Pull Requests
 
