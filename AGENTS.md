@@ -205,17 +205,19 @@ Examples:
 
 ### PR Titles
 
-PR titles should mirror the final squashed commit title:
+PR titles should include the task id in the scope:
 
 ```text
-<type>(<scope>): <imperative summary>
+<type>(<track-task-id>): <imperative summary>
 ```
+
+Use lowercase task ids in the scope, combining the task track and task number.
 
 Examples:
 
-- `feature(frontend): add candle API integration`
-- `infra(k3s): add baseline deployment manifests`
-- `docs(agents): document git conventions`
+- `feature(frontend-task-02): add candle API integration`
+- `infra(infra-task-01): add baseline deployment manifests`
+- `docs(infra-task-01): document deployment conventions`
 
 ## Pull Requests
 
