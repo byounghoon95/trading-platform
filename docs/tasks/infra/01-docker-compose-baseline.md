@@ -2,7 +2,7 @@
 
 ## Status
 
-todo
+done
 
 ## Goal
 
@@ -30,4 +30,12 @@ Add a local Docker Compose setup for frontend, backend, and Redis.
 ## Verification
 
 - `docker compose config`
+
+## Completion Notes
+
+- Status: done
+- Skills used: implement-task
+- Changed: added `infra/docker/compose.yaml` with frontend/backend placeholders and Redis; added local Compose usage docs
+- Verification: `docker compose -f infra/docker/compose.yaml config` -> passed; `docker compose -f infra/docker/compose.yaml up -d redis` + `docker compose -f infra/docker/compose.yaml ps redis` -> Redis healthy; `docker compose -f infra/docker/compose.yaml down --volumes` -> cleanup passed
+- Notes: frontend and backend containers intentionally remain command stubs until `infra TASK-02` adds production Dockerfiles
 

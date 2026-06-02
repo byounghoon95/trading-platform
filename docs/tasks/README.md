@@ -54,10 +54,10 @@ Status values come from `## Status Values` above. Update this column **and** the
 | backend TASK-01 | ✅ done | foundation TASK-01 | [01-backend-scaffold.md](backend/01-backend-scaffold.md) |
 | backend TASK-02 | ✅ done | backend TASK-01 | [02-backend-health-endpoint.md](backend/02-backend-health-endpoint.md) |
 | backend TASK-03 | ✅ done | backend TASK-01 | [03-binance-candle-client.md](backend/03-binance-candle-client.md) |
-| backend TASK-04 | ⬜ todo | backend TASK-02, backend TASK-03 | [04-normalized-candle-endpoint.md](backend/04-normalized-candle-endpoint.md) |
+| backend TASK-04 | ✅ done | backend TASK-02, backend TASK-03 | [04-normalized-candle-endpoint.md](backend/04-normalized-candle-endpoint.md) |
 | backend TASK-05 | ⬜ todo | backend TASK-04 | [05-redis-candle-caching.md](backend/05-redis-candle-caching.md) |
 | backend TASK-06 | ⬜ todo | backend TASK-03 | [06-market-ticker-endpoints.md](backend/06-market-ticker-endpoints.md) |
-| infra TASK-01 | ⬜ todo | foundation TASK-01 | [01-docker-compose-baseline.md](infra/01-docker-compose-baseline.md) |
+| infra TASK-01 | ✅ done | foundation TASK-01 | [01-docker-compose-baseline.md](infra/01-docker-compose-baseline.md) |
 | infra TASK-02 | ✅ done | frontend TASK-01, backend TASK-01 | [02-production-dockerfiles.md](infra/02-production-dockerfiles.md) |
 | infra TASK-03 | ⬜ todo | infra TASK-01, infra TASK-02 | [03-k3s-manifests.md](infra/03-k3s-manifests.md) |
 | infra TASK-04 | ⬜ todo | frontend TASK-01, backend TASK-01 | [04-github-actions-ci.md](infra/04-github-actions-ci.md) |
