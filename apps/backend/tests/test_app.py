@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.testclient import TestClient
 
 from app.main import app, create_app
 
@@ -11,3 +12,12 @@ def test_create_app_uses_marketpulse_title() -> None:
     created_app = create_app()
 
     assert created_app.title == "MarketPulse API"
+
+
+def test_health_endpoint_returns_ok() -> None:
+    test_client = TestClient(app)
+
+    response = test_client.get("/health")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
