@@ -9,9 +9,16 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
   rules:
-    - host: marketpulse.local
+    - host: marketpulse.byhoon.co.kr
       http:
         paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  name: http
           - path: /
             pathType: Prefix
             backend:
@@ -19,4 +26,3 @@ spec:
                 name: frontend
                 port:
                   name: http
-

@@ -35,4 +35,4 @@ kubectl apply --dry-run=client -f infra/k8s
 kubectl apply -f infra/k8s
 ```
 
-The frontend Ingress uses `marketpulse.local` over HTTP. HTTPS and cert-manager are intentionally left for a later task.
+The frontend Ingress uses `marketpulse.byhoon.co.kr` over HTTP. HTTPS and cert-manager are intentionally left for a later task.
