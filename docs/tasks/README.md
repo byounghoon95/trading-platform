@@ -61,7 +61,7 @@ Status values come from `## Status Values` above. Update this column **and** the
 | infra TASK-02 | ✅ done | frontend TASK-01, backend TASK-01 | [02-production-dockerfiles.md](infra/02-production-dockerfiles.md) |
 | infra TASK-03 | ✅ done | infra TASK-01, infra TASK-02 | [03-k3s-manifests.md](infra/03-k3s-manifests.md) |
 | infra TASK-04 | ✅ done | frontend TASK-01, backend TASK-01 | [04-github-actions-ci.md](infra/04-github-actions-ci.md) |
-| infra TASK-05 | ⬜ todo | infra TASK-02, infra TASK-03, infra TASK-04 | [05-image-build-deploy-workflow.md](infra/05-image-build-deploy-workflow.md) |
+| infra TASK-05 | ✅ done | infra TASK-02, infra TASK-03, infra TASK-04 | [05-image-build-deploy-workflow.md](infra/05-image-build-deploy-workflow.md) |
 | backend TASK-07 | ⬜ todo | backend TASK-06 | [07-websocket-price-stream.md](backend/07-websocket-price-stream.md) |
 | frontend TASK-04 | ⬜ todo | frontend TASK-03, backend TASK-07 | [04-websocket-price-client.md](frontend/04-websocket-price-client.md) |
 | infra TASK-06 | ⬜ todo | backend TASK-04, backend TASK-06, infra TASK-03 | [06-metrics-prometheus.md](infra/06-metrics-prometheus.md) |
