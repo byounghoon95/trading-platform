@@ -2,7 +2,7 @@
 
 ## Status
 
-todo
+done
 
 ## Goal
 
@@ -44,3 +44,10 @@ Expose frontend-friendly market metadata and polling ticker data.
 
 - `pytest`
 
+## Completion Notes
+
+- Status: done
+- Skills used: brainstorming, implement-task
+- Changed: added `/api/markets` and `/api/ticker` routers, market/ticker response schemas, service functions, and API tests for successful and invalid requests.
+- Verification: `.venv/bin/pytest` -> 19 passed; `.venv/bin/ruff check .` -> passed.
+- Notes: followed the existing `api/services/clients/schemas` backend layout instead of the task's older expected `market_data`/`models` paths; Redis caching remains deferred to backend TASK-05.

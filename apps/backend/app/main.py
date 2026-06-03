@@ -2,6 +2,8 @@ from fastapi import FastAPI
 
 from app.api.candles import router as candles_router
 from app.api.health import router as health_router
+from app.api.markets import router as markets_router
+from app.api.ticker import router as ticker_router
 from app.core.config import get_settings
 
 
@@ -10,6 +12,8 @@ def create_app() -> FastAPI:
     fastapi_app = FastAPI(title=settings.app_name)
     fastapi_app.include_router(health_router)
     fastapi_app.include_router(candles_router)
+    fastapi_app.include_router(markets_router)
+    fastapi_app.include_router(ticker_router)
     return fastapi_app
 
 
