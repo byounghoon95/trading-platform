@@ -12,6 +12,13 @@ spec:
     - host: marketpulse.byhoon.co.kr
       http:
         paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  name: http
           - path: /
             pathType: Prefix
             backend:
