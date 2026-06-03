@@ -6,7 +6,8 @@ Track-local rules for `apps/backend/`. Root rules (behavioral guidelines, worktr
 
 - Language: Python
 - Framework: FastAPI
-- Cache: Redis (added in a later task — do not introduce earlier)
+- Database: PostgreSQL (added after market and ticker endpoints — do not introduce earlier)
+- Cache: Redis (added after PostgreSQL persistence — do not introduce earlier)
 - Market data source: Binance public API
 - Test runner: `pytest`
 - Linter: `ruff`
@@ -18,7 +19,7 @@ Track-local rules for `apps/backend/`. Root rules (behavioral guidelines, worktr
 - Validate external inputs such as `symbol`, `interval`, and `limit` before reaching downstream calls.
 - Prefer clear module boundaries over premature abstraction.
 - Add tests around data normalization, validation, and API behavior.
-- Do not introduce Redis, WebSocket, or external integrations before the task that adds them.
+- Do not introduce PostgreSQL, Redis, WebSocket, or external integrations before the task that adds them.
 
 ## Naming
 
@@ -46,7 +47,7 @@ Track-local rules for `apps/backend/`. Root rules (behavioral guidelines, worktr
 
 - **API layer**: owns FastAPI code (`APIRouter`, `Query`, `Path`, `Depends`, `HTTPException`, `response_model`). Converts service results into response schemas by calling the conversion functions in `app/schemas/`. Does not call external APIs/Redis/files directly and does not parse Binance payloads.
 - **Service layer**: use-case orchestration (validation, cache, clients, normalization). Returns DTOs or simple values. Must not know FastAPI types (`Request`, `Response`, `Depends`, `HTTPException`).
-- **Data access layer**: owns I/O details (paths, Redis keys, params, timeouts, status handling). Returns raw payloads or DTOs. Raises project-owned errors, never leaks low-level library exceptions.
+- **Data access layer**: owns I/O details (paths, database queries, Redis keys, params, timeouts, status handling). Returns raw payloads or DTOs. Raises project-owned errors, never leaks low-level library exceptions.
 - Do not skip the service layer for market-data endpoints.
 
 ## DTO, Schema, and Conversion
@@ -69,6 +70,14 @@ Track-local rules for `apps/backend/`. Root rules (behavioral guidelines, worktr
 - Redis/cache access lives in `app/clients/` (e.g. `clients/redis.py`, `clients/candle_cache.py`), not a separate `app/cache/`.
 - Cache functions: `get_*` / `set_*` / `delete_*`. Key builders: `build_*_cache_key`.
 - Cache modules own Redis keys, TTLs, and DTO serialization/deserialization. Services decide cache-vs-fallback; routers never call cache modules directly.
+- Redis is a short-lived performance layer only. PostgreSQL remains the durable market data store.
+
+## Database (when introduced)
+
+- PostgreSQL access lives in `app/clients/` or a focused data-access module under the existing client boundary.
+- Database modules own SQL, table names, indexes, and DTO serialization/deserialization from rows.
+- Services decide when to read stored data, refresh from Binance, persist refreshed data, or fall back after provider failures.
+- Routers never call database modules directly.
 
 ## Dependencies, Errors, Async, Imports
 

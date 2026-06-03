@@ -200,6 +200,29 @@ Reason:
 - Async HTTP clients and WebSocket support are straightforward.
 - Python keeps data normalization and future analytics work simple.
 
+### Database
+
+Recommended:
+
+- PostgreSQL
+
+Use cases:
+
+- Persist normalized candle data.
+- Persist normalized ticker snapshots.
+- Let API responses use project-owned stored market data instead of depending only on live Binance calls.
+- Demonstrate schema design, indexing, migrations, readiness checks, and stateful runtime configuration.
+
+Recommended choice for this project:
+
+- PostgreSQL
+
+Reason:
+
+- PostgreSQL is enough for the compact MVP and keeps operational scope smaller than TimescaleDB.
+- Historical candle persistence can later be upgraded to TimescaleDB if the project needs time-series-specific features.
+- A durable database makes Redis an explicit performance layer instead of the only storage mechanism.
+
 ### Cache
 
 Recommended:
@@ -208,25 +231,15 @@ Recommended:
 
 Use cases:
 
-- Cache candle API responses with short TTL.
+- Cache recent candle and ticker API responses with short TTL.
 - Reduce external API calls.
+- Reduce repeated database reads for hot symbols and intervals.
 - Show rate-limit-aware backend design.
-
-### Database
-
-MVP recommendation:
-
-- No database for the first version.
-
-Optional portfolio upgrade:
-
-- PostgreSQL or TimescaleDB for historical candle persistence.
 
 Reason:
 
-- A database is not required to show the core dashboard.
-- Avoiding DB in MVP keeps the project focused.
-- Redis and external API integration already provide enough backend work.
+- Redis should not be the durable source of market data.
+- Keeping Redis after PostgreSQL makes cache behavior easier to explain: PostgreSQL owns persistence, Redis owns short-lived response acceleration.
 
 ### Infrastructure
 
@@ -255,13 +268,11 @@ Frontend
   v
 Backend API
   |
-  | cache read/write
-  v
-Redis
+  +--> Redis short-lived response cache
   |
-  | cache miss
-  v
-Binance Public API
+  +--> PostgreSQL durable market data store
+  |
+  +--> Binance Public API for missing/stale refreshes
 ```
 
 k3s deployment architecture:
@@ -276,13 +287,14 @@ Ingress Controller
   |
   +--> Backend Service  --> Backend Pod
                             |
-                            v
-                          Redis Service --> Redis Pod
+                            +--> PostgreSQL Service --> PostgreSQL Pod
+                            |
+                            +--> Redis Service      --> Redis Pod
 ```
 
 MVP Kubernetes scope:
 
-- Deploy frontend, backend, and Redis to k3s.
+- Deploy frontend, backend, PostgreSQL, and Redis to k3s.
 - Use ConfigMaps for non-secret configuration.
 - Use Secrets only for values that should not be committed, even if the MVP does not require exchange credentials.
 - Add liveness and readiness probes.
@@ -366,14 +378,38 @@ Example ticker object:
 
 The frontend should consume these normalized objects instead of depending on Binance response shapes directly.
 
+### Persistence Strategy
+
+The backend should persist normalized market data in PostgreSQL.
+
+Suggested candle table behavior:
+
+- Store one row per `symbol`, `interval`, and `open_time`.
+- Upsert rows when Binance returns candle data.
+- Index by `symbol`, `interval`, and `open_time` for chart queries.
+
+Suggested ticker table behavior:
+
+- Store ticker snapshots by `symbol` and `updated_at`.
+- Keep the latest snapshot query cheap with an index by `symbol` and descending `updated_at`.
+- Use Binance to refresh missing or stale ticker records.
+
+PostgreSQL is the durable market data store. Binance remains the upstream source for refreshes.
+
 ### Cache Strategy
 
-The backend should cache candle data by `symbol`, `interval`, and `limit`.
+After PostgreSQL persistence is in place, the backend should cache recent response payloads in Redis.
 
-Example cache key:
+Example candle cache key:
 
 ```text
 candles:BTCUSDT:1m:200
+```
+
+Example ticker cache key:
+
+```text
+ticker:BTCUSDT
 ```
 
 Suggested TTL:
@@ -383,6 +419,9 @@ Suggested TTL:
 - `15m`: 60-120 seconds
 - `1h`: 3-5 minutes
 - `1d`: 10-30 minutes
+- ticker: 3-10 seconds
+
+Redis should hold only short-lived recent responses. It should not replace PostgreSQL persistence.
 
 ### Real-Time Updates
 
@@ -417,7 +456,9 @@ Backend readiness should fail when required dependencies are unavailable.
 Example:
 
 - Liveness: process is alive.
-- Readiness: backend can serve requests and Redis is reachable.
+- Readiness before persistence: backend can serve requests.
+- Readiness after PostgreSQL persistence: backend can serve requests and PostgreSQL is reachable.
+- Readiness after Redis caching: backend can serve requests and PostgreSQL plus Redis are reachable.
 
 ## 9. Repository Structure
 
@@ -483,9 +524,10 @@ The `$requesting-code-review` skill should review the completed task against the
 - backend TASK-02: Implement backend health endpoint
 - backend TASK-03: Implement Binance candle client
 - backend TASK-04: Implement normalized candle endpoint
-- backend TASK-05: Add Redis candle caching
-- backend TASK-06: Add market and ticker endpoints
-- backend TASK-07: Add WebSocket price stream
+- backend TASK-05: Add market and ticker endpoints
+- backend TASK-06: Add PostgreSQL market data persistence
+- backend TASK-07: Add Redis response caching
+- backend TASK-08: Add WebSocket price stream
 
 ### Frontend Track
 
@@ -505,6 +547,7 @@ The `$requesting-code-review` skill should review the completed task against the
 - infra TASK-07: Add Grafana dashboard documentation or dashboard JSON
 - infra TASK-08: Add HTTPS ingress with cert-manager
 - infra TASK-09: Add k3s deployment automation
+- infra TASK-10: Add PostgreSQL runtime
 
 ### Portfolio Track
 
@@ -516,6 +559,7 @@ Parallelization rule:
 - Frontend mocked chart work can continue before backend API completion.
 - Frontend API integration should wait for the normalized candle endpoint and market/ticker endpoints.
 - k3s and CI/CD work should wait until the app structure is stable.
+- PostgreSQL runtime work should follow backend persistence planning so environment variable names and readiness behavior stay consistent.
 
 ## 12. Definition of Done
 
@@ -524,9 +568,10 @@ The portfolio version is done when:
 - The dashboard works locally with one command.
 - Candle chart, volume, MA lines, and current price are visible.
 - Backend hides external API details behind normalized endpoints.
-- Redis caching is implemented and documented.
+- PostgreSQL persistence is implemented and documented.
+- Redis caching is implemented and documented as a short-lived performance layer.
 - Docker images build successfully.
-- k3s manifests can deploy the app with frontend, backend, Redis, probes, and ingress.
+- k3s manifests can deploy the app with frontend, backend, PostgreSQL, Redis, probes, and ingress.
 - CI runs tests and builds images.
 - README explains architecture, local run, deployment, and tradeoffs.
 - At least one operational issue or troubleshooting case is documented.
@@ -547,6 +592,7 @@ The project should prepare answers for these questions:
 - Why was login excluded?
 - Why was k3s selected instead of EKS or GKE?
 - Why was Redis used?
+- Why was PostgreSQL added before Redis?
 - How are external API rate limits handled?
 - How is candle data normalized?
 - How does the frontend handle reconnecting or stale data?
@@ -560,7 +606,7 @@ Possible later additions:
 
 - Watchlist without login using local storage
 - Alert rules for price thresholds
-- PostgreSQL or TimescaleDB candle persistence
+- TimescaleDB candle persistence upgrade
 - More exchanges
 - More indicators such as RSI or MACD
 - Backtesting sandbox

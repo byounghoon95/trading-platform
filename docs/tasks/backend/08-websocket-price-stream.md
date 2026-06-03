@@ -1,4 +1,4 @@
-# backend TASK-07: Add WebSocket Price Stream
+# backend TASK-08: Add WebSocket Price Stream
 
 ## Status
 
@@ -6,7 +6,7 @@ todo
 
 ## Goal
 
-Add a backend WebSocket stream for normalized ticker updates after the HTTP ticker endpoint is stable.
+Add a backend WebSocket stream for normalized ticker updates after the HTTP ticker endpoint, PostgreSQL persistence, and Redis caching are stable.
 
 ## Scope
 
@@ -43,4 +43,3 @@ Add a backend WebSocket stream for normalized ticker updates after the HTTP tick
 
 - `pytest`
 - Manual WebSocket smoke test
-

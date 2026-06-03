@@ -15,7 +15,7 @@ Add Kubernetes manifests for deploying frontend, backend, and Redis to k3s.
 - Add backend Deployment and Service
 - Add Redis Deployment and Service
 - Add ConfigMap and Secret placeholders
-- Add liveness and readiness probes (readiness must point at the Redis-aware path defined by `backend TASK-05` once that task is done; until then `/health` is acceptable)
+- Add liveness and readiness probes. `/health` is acceptable until later PostgreSQL-aware and Redis-aware readiness behavior is implemented.
 - Add basic Ingress for the frontend
 
 ## Out of Scope
@@ -41,4 +41,4 @@ Add Kubernetes manifests for deploying frontend, backend, and Redis to k3s.
 - Skills used: implement-task
 - Changed: added baseline k3s manifests under `infra/k8s` for namespace, config, secret placeholder, frontend, backend, Redis, services, probes, and frontend Ingress; added k8s usage notes.
 - Verification: `kubectl apply --dry-run=client -f infra/k8s` -> passed for all 10 Kubernetes objects; `python3` YAML parse check over `infra/k8s/*.yaml` -> parsed 10 Kubernetes objects; `git diff --check` -> passed.
-- Notes: backend readiness uses `/health` until the Redis-aware health path from `backend TASK-05` exists; app images use `leebyonghoon/marketpulse-backend:latest` and `leebyonghoon/marketpulse-frontend:latest` per deployment request.
+- Notes: backend readiness uses `/health` until later PostgreSQL-aware and Redis-aware readiness behavior exists; app images use `leebyonghoon/marketpulse-backend:latest` and `leebyonghoon/marketpulse-frontend:latest` per deployment request.

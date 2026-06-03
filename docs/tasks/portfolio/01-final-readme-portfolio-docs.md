@@ -28,12 +28,13 @@ Create the final README and portfolio-ready documentation.
 ## Depends On
 
 - frontend TASK-04
-- backend TASK-05
 - backend TASK-07
+- backend TASK-08
 - infra TASK-06
 - infra TASK-07
 - infra TASK-08
 - infra TASK-09
+- infra TASK-10
 
 ## Out of Scope
 
@@ -49,4 +50,3 @@ Create the final README and portfolio-ready documentation.
 ## Verification
 
 - Manual documentation review
-
