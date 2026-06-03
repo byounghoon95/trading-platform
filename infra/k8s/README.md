@@ -12,16 +12,16 @@ This directory contains the baseline k3s manifests for MarketPulse.
 
 ## Images
 
-The app manifests use Docker Hub images tagged as `latest`:
+The app images are built by the GitHub Actions image workflow and pushed to Docker Hub:
 
 ```sh
-docker build -t leebyonghoon/marketpulse-backend:latest apps/backend
-docker build -t leebyonghoon/marketpulse-frontend:latest apps/frontend
-docker push leebyonghoon/marketpulse-backend:latest
-docker push leebyonghoon/marketpulse-frontend:latest
+leebyonghoon/marketpulse-backend:sha-<git-sha>
+leebyonghoon/marketpulse-frontend:sha-<git-sha>
 ```
 
-Push those images before applying the manifests so k3s can pull them.
+The current baseline manifests use `latest` for compatibility with the initial k3s deployment, but `docs/deployment.md` shows how to roll out an immutable `sha-<git-sha>` tag.
+
+Use `docs/deployment.md` for the manual k3s rollout handoff.
 
 ## Validate
 
