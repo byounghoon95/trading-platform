@@ -2,7 +2,7 @@
 
 ## Status
 
-todo
+done
 
 ## Goal
 
@@ -33,3 +33,10 @@ Add CI workflow for frontend and backend checks.
 
 - Review workflow syntax locally if tooling is available.
 
+## Completion Notes
+
+- Status: done
+- Skills used: implement-task
+- Changed: added GitHub Actions CI workflow with backend ruff/pytest and frontend lint/build jobs, dependency caching, and ref-scoped concurrency cancellation.
+- Verification: `python3` YAML parse check for `.github/workflows/ci.yml` -> passed; `docker run --rm -v "$PWD":/repo -w /repo rhysd/actionlint:latest .github/workflows/ci.yml` -> passed.
+- Notes: workflow intentionally does not build/push images or deploy to k3s; that remains infra TASK-05.
