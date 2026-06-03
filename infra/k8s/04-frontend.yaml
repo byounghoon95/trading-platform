@@ -20,8 +20,8 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: marketpulse-frontend:local
-          imagePullPolicy: IfNotPresent
+          image: leebyonghoon/marketpulse-frontend:latest
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 8080
@@ -57,4 +57,3 @@ spec:
     - name: http
       port: 80
       targetPort: http
-

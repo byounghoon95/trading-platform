@@ -12,14 +12,16 @@ This directory contains the baseline k3s manifests for MarketPulse.
 
 ## Images
 
-The app manifests use the local tags documented by `infra TASK-02`:
+The app manifests use Docker Hub images tagged as `latest`:
 
 ```sh
-docker build -t marketpulse-frontend:local apps/frontend
-docker build -t marketpulse-backend:local apps/backend
+docker build -t leebyonghoon/marketpulse-backend:latest apps/backend
+docker build -t leebyonghoon/marketpulse-frontend:latest apps/frontend
+docker push leebyonghoon/marketpulse-backend:latest
+docker push leebyonghoon/marketpulse-frontend:latest
 ```
 
-Import or build those images into the k3s node before applying the manifests.
+Push those images before applying the manifests so k3s can pull them.
 
 ## Validate
 
@@ -34,4 +36,3 @@ kubectl apply -f infra/k8s
 ```
 
 The frontend Ingress uses `marketpulse.local` over HTTP. HTTPS and cert-manager are intentionally left for a later task.
-

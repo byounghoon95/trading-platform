@@ -20,8 +20,8 @@ spec:
     spec:
       containers:
         - name: backend
-          image: marketpulse-backend:local
-          imagePullPolicy: IfNotPresent
+          image: leebyonghoon/marketpulse-backend:latest
+          imagePullPolicy: Always
           envFrom:
             - configMapRef:
                 name: marketpulse-config
@@ -62,4 +62,3 @@ spec:
     - name: http
       port: 8000
       targetPort: http
-
