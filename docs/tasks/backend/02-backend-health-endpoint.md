@@ -16,7 +16,7 @@ Add a simple backend health endpoint for runtime and deployment checks.
 
 ## Out of Scope
 
-- Do not check Redis readiness yet.
+- Do not check PostgreSQL or Redis readiness yet.
 - Do not add Kubernetes probes yet.
 
 ## Acceptance Criteria

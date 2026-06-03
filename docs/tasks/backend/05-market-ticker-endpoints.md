@@ -1,4 +1,4 @@
-# backend TASK-06: Add Market And Ticker Endpoints
+# backend TASK-05: Add Market And Ticker Endpoints
 
 ## Status
 
@@ -29,6 +29,7 @@ Expose frontend-friendly market metadata and polling ticker data.
 
 ## Out of Scope
 
+- Do not add PostgreSQL persistence in this task.
 - Do not add WebSocket streaming.
 - Do not add user watchlists.
 - Do not add Redis caching for ticker data unless needed for rate-limit protection.
@@ -43,4 +44,3 @@ Expose frontend-friendly market metadata and polling ticker data.
 ## Verification
 
 - `pytest`
-

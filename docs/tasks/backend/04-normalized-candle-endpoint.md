@@ -18,7 +18,7 @@ Expose normalized candle data through the backend API.
 
 ## Out of Scope
 
-- Do not add Redis caching.
+- Do not add PostgreSQL persistence or Redis caching.
 - Do not add frontend chart integration.
 
 ## Acceptance Criteria
@@ -37,5 +37,4 @@ Expose normalized candle data through the backend API.
 - Skills used: implement-task, requesting-code-review
 - Changed: added `/api/candles` route, candle service/schema conversion, and endpoint tests for success and error cases
 - Verification: `/tmp/backend-task-04-venv/bin/python -m pytest` -> 15 passed; `/tmp/backend-task-04-venv/bin/ruff check .` -> all checks passed
-- Notes: Redis caching and frontend integration remain out of scope for later tasks; current-session code review found no blocking issues
-
+- Notes: PostgreSQL persistence, Redis caching, and frontend integration remain out of scope for later tasks; current-session code review found no blocking issues
