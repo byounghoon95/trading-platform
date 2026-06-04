@@ -22,6 +22,23 @@ Expected metric families include:
 
 The Kubernetes backend Service and backend pod template include basic Prometheus scrape annotations for annotation-based discovery. This avoids requiring Prometheus Operator CRDs in the MVP k3s manifests.
 
+## Backend PostgreSQL Persistence
+
+Set `DATABASE_URL` to enable PostgreSQL persistence for normalized candle and ticker responses:
+
+```bash
+DATABASE_URL=postgresql://marketpulse:<password>@postgres:5432/marketpulse
+```
+
+When configured, the backend initializes the market data schema on startup, persists refreshed Binance candle/ticker responses, and serves fresh stored records before calling Binance again. If stored records exist and a refresh fails, the API falls back to the stored records.
+
+Liveness and readiness are separate:
+
+- `GET /health` stays independent of PostgreSQL and returns liveness.
+- `GET /ready` checks PostgreSQL and returns 503 when `DATABASE_URL` is missing or the database is unreachable.
+
+Docker Compose and k3s PostgreSQL runtime wiring are tracked by infra TASK-10.
+
 ## Prometheus And Grafana
 
 `infra/k8s/06-monitoring.yaml` deploys a compact Prometheus and Grafana runtime in the `marketpulse` namespace.

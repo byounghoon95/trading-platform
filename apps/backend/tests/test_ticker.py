@@ -8,6 +8,7 @@ from app.clients.binance import (
     InvalidMarketDataRequestError,
     TickerDTO,
 )
+from app.clients.postgres import DatabaseClientError
 from app.main import app
 
 
@@ -67,5 +68,23 @@ def test_ticker_endpoint_returns_bad_gateway_for_provider_failure(monkeypatch) -
         "detail": {
             "code": "market_data_unavailable",
             "message": "Market data provider request failed",
+        }
+    }
+
+
+def test_ticker_endpoint_returns_unavailable_for_database_failure(monkeypatch) -> None:
+    async def get_ticker_stub(symbol: str) -> TickerDTO:
+        raise DatabaseClientError("database failed")
+
+    monkeypatch.setattr("app.api.ticker.get_ticker", get_ticker_stub)
+    test_client = TestClient(app)
+
+    response = test_client.get("/api/ticker?symbol=ETHUSDT")
+
+    assert response.status_code == 503
+    assert response.json() == {
+        "detail": {
+            "code": "data_store_unavailable",
+            "message": "Market data store is unavailable",
         }
     }
