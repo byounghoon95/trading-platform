@@ -2,7 +2,7 @@
 
 ## Status
 
-todo
+done
 
 ## Goal
 
@@ -42,3 +42,11 @@ Persist normalized market data in PostgreSQL so backend responses can use projec
 
 - `pytest`
 - `ruff check .`
+
+## Completion Notes
+
+- Status: done
+- Skills used: implement-task
+- Changed: added backend PostgreSQL configuration, schema initialization, candle/ticker persistence data access, database-backed service refresh/fallback behavior, `/ready` database readiness, database error API mapping, and persistence/readiness tests.
+- Verification: `uv run --extra dev pytest` -> 37 passed; `uv run --extra dev ruff check .` -> all checks passed.
+- Notes: persistence activates when `DATABASE_URL` is configured; without it, API market-data endpoints keep the existing Binance-only behavior while `/ready` returns 503. infra TASK-10 remains the deployment/runtime follow-up for Compose and k3s PostgreSQL wiring.
