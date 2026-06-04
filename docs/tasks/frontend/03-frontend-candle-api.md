@@ -2,7 +2,7 @@
 
 ## Status
 
-todo
+done
 
 ## Goal
 
@@ -51,3 +51,10 @@ Load market, candle, and ticker data from the backend and render the live dashbo
 
 - `npm run build`
 
+## Completion Notes
+
+- Status: done
+- Skills used: brainstorming, implement-task
+- Changed: replaced mocked dashboard data with API-backed market, candle, and ticker loading; added polling ticker refresh, stale/error/loading/empty states, componentized dashboard controls, price panel, candle chart, and API client; added Vite `/api` dev proxy.
+- Verification: `npm run lint` -> passed; `npm run build` -> passed with Node 18 warning because Vite 7 expects Node 20.19+ while the frontend Dockerfile uses Node 22.12; `npm test` -> not run because no test script is configured.
+- Notes: depends on backend TASK-04 candle endpoint and backend TASK-05 market/ticker endpoints being merged before this frontend branch is merged/deployed.
