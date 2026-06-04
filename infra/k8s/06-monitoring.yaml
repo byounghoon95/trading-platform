@@ -98,6 +98,29 @@ spec:
       port: 9090
       targetPort: http
 ---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prometheus
+  namespace: marketpulse
+  labels:
+    app.kubernetes.io/name: marketpulse
+    app.kubernetes.io/component: prometheus
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  rules:
+    - host: prometheus.marketpulse.byhoon.co.kr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: prometheus
+                port:
+                  name: http
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:

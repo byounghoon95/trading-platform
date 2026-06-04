@@ -14,3 +14,5 @@ The image workflow pushes backend and frontend images to Docker Hub. k3s rollout
 ## Monitoring
 
 The backend exposes Prometheus metrics at `/metrics`. The k3s manifests include a compact Prometheus and Grafana runtime in `infra/k8s/06-monitoring.yaml`, with the `MarketPulse Operations` Grafana dashboard provisioned from `infra/monitoring/grafana/marketpulse-dashboard.json`.
+
+Prometheus is exposed through `prometheus.marketpulse.byhoon.co.kr` when DNS points that host at the k3s ingress node.

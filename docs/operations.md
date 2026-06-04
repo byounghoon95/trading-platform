@@ -30,7 +30,7 @@ Prometheus:
 
 - Scrapes backend metrics from `backend.marketpulse.svc.cluster.local:8000/metrics`.
 - Keeps in-pod time-series data for 7 days with `emptyDir` storage.
-- Runs inside the cluster only and is not exposed through Ingress.
+- Exposes the Prometheus UI through HTTP Ingress at `prometheus.marketpulse.byhoon.co.kr`.
 
 Grafana:
 
@@ -44,6 +44,12 @@ Deploy or update monitoring:
 kubectl apply -f infra/k8s/06-monitoring.yaml
 kubectl rollout status deployment/prometheus -n marketpulse
 kubectl rollout status deployment/grafana -n marketpulse
+```
+
+Public Prometheus access requires a DNS record pointing at the k3s ingress node:
+
+```text
+prometheus.marketpulse.byhoon.co.kr. A 144.91.100.165
 ```
 
 Validate Prometheus targets:
