@@ -39,7 +39,7 @@ The backend receives database settings from `marketpulse-config` and `marketpuls
 
 Replace the `DATABASE_URL` and `POSTGRES_PASSWORD` placeholder values in `infra/k8s/01-config.yaml` before applying these manifests to a shared cluster.
 
-The backend readiness probe still uses `/health` because PostgreSQL-aware readiness is implemented by backend TASK-06. After that endpoint exists, update `infra/k8s/03-backend.yaml` to point readiness at the database-aware readiness path while keeping liveness independent of PostgreSQL.
+The backend readiness probe uses `/ready` so rollout readiness depends on PostgreSQL connectivity. Liveness stays on `/health` so Kubernetes does not restart the backend only because PostgreSQL is temporarily unavailable.
 
 ## Validate
 
