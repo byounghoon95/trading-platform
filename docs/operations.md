@@ -91,3 +91,26 @@ Then open `http://localhost:3000` or `http://grafana.marketpulse.byhoon.co.kr` a
 Change the default password after the first public login.
 
 The dashboard artifact also lives at `infra/monitoring/grafana/marketpulse-dashboard.json` for manual import or review.
+
+## PostgreSQL Runtime
+
+Local Docker Compose runs PostgreSQL as `postgres` with database name `marketpulse`, user `marketpulse`, and a local development password. The backend receives `DATABASE_URL=postgresql://marketpulse:marketpulse@postgres:5432/marketpulse`.
+
+Useful local checks:
+
+```bash
+docker compose -f infra/docker/compose.yaml ps postgres
+docker compose -f infra/docker/compose.yaml exec postgres pg_isready -U marketpulse -d marketpulse
+```
+
+In k3s, PostgreSQL runs as `statefulset/postgres` in the `marketpulse` namespace and stores data in a persistent volume claim.
+
+Useful cluster checks:
+
+```bash
+kubectl -n marketpulse rollout status statefulset/postgres
+kubectl -n marketpulse exec statefulset/postgres -- pg_isready -U marketpulse -d marketpulse
+kubectl -n marketpulse get pvc
+```
+
+Redis remains a separate cache runtime and is not the durable market data store.

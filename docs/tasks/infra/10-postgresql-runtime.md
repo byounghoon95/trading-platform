@@ -2,7 +2,7 @@
 
 ## Status
 
-todo
+done
 
 ## Goal
 
@@ -35,3 +35,11 @@ Add PostgreSQL runtime support for local Docker Compose and k3s deployment after
 
 - `docker compose config`
 - `kubectl apply --dry-run=client -f infra/k8s`
+
+## Completion Notes
+
+- Status: done
+- Skills used: implement-task
+- Changed: added PostgreSQL runtime support to Docker Compose and k3s manifests; wired backend database environment values through Compose, ConfigMap, and Secret values; pointed backend readiness at PostgreSQL-aware `/ready`; documented local and k3s database startup and troubleshooting.
+- Verification: `docker compose -f infra/docker/compose.yaml config` -> passed; `docker compose -f infra/docker/compose.yaml up -d postgres redis` plus `ps` and `pg_isready` -> PostgreSQL and Redis healthy, PostgreSQL accepting connections; `docker compose -f infra/docker/compose.yaml down --volumes` -> cleanup passed; `kubectl apply --dry-run=client -f infra/k8s` -> passed.
+- Notes: backend TASK-06 is merged, so k3s readiness now uses `/ready` while liveness remains on `/health`.

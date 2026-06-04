@@ -22,12 +22,31 @@ services:
       - echo 'MarketPulse backend placeholder; Dockerfile lands in infra TASK-02.' && sleep infinity
     environment:
       MARKETPULSE_ENV: local
+      DATABASE_URL: postgresql://marketpulse:marketpulse@postgres:5432/marketpulse
       REDIS_URL: redis://redis:6379/0
     ports:
       - "8000:8000"
     depends_on:
+      postgres:
+        condition: service_healthy
       redis:
         condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: marketpulse
+      POSTGRES_USER: marketpulse
+      POSTGRES_PASSWORD: marketpulse
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marketpulse -d marketpulse"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7.4-alpine
@@ -42,4 +61,5 @@ services:
       retries: 5
 
 volumes:
+  postgres-data:
   redis-data:
