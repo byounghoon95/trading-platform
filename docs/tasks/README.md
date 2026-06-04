@@ -69,7 +69,7 @@ Status values come from `## Status Values` above. Update this column **and** the
 | infra TASK-07 | ✅ done | infra TASK-06 | [07-grafana-dashboard.md](infra/07-grafana-dashboard.md) |
 | infra TASK-08 | ⬜ todo | infra TASK-03 | [08-https-cert-manager.md](infra/08-https-cert-manager.md) |
 | infra TASK-09 | ⬜ todo | infra TASK-05, infra TASK-08 | [09-k3s-deploy-automation.md](infra/09-k3s-deploy-automation.md) |
-| infra TASK-10 | ⬜ todo | backend TASK-06, infra TASK-03 | [10-postgresql-runtime.md](infra/10-postgresql-runtime.md) |
+| infra TASK-10 | ⛔ blocked | backend TASK-06, infra TASK-03 | [10-postgresql-runtime.md](infra/10-postgresql-runtime.md) |
 | portfolio TASK-01 | ⬜ todo | frontend TASK-04, backend TASK-07, backend TASK-08, infra TASK-06, infra TASK-07, infra TASK-08, infra TASK-09, infra TASK-10 | [01-final-readme-portfolio-docs.md](portfolio/01-final-readme-portfolio-docs.md) |
 
 ## Parallel Work

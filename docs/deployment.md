@@ -46,3 +46,15 @@ curl -i "http://marketpulse.byhoon.co.kr/api/candles?symbol=BTCUSDT&interval=1m&
 ```
 
 Automated SSH deployment is intentionally deferred to infra TASK-09.
+
+## PostgreSQL Runtime
+
+The k3s manifests include a single PostgreSQL StatefulSet exposed through the in-cluster `postgres` Service. The backend reads PostgreSQL configuration from `marketpulse-config` and `marketpulse-secrets`, including `DATABASE_URL`.
+
+Before deploying to a shared cluster, replace the placeholder PostgreSQL password values in `infra/k8s/01-config.yaml`:
+
+```sh
+kubectl apply -f infra/k8s
+kubectl -n marketpulse rollout status statefulset/postgres
+kubectl -n marketpulse rollout status deployment/backend
+```

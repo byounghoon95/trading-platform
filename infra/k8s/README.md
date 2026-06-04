@@ -7,6 +7,7 @@ This directory contains the baseline k3s manifests for MarketPulse.
 - `marketpulse` namespace
 - Frontend Deployment, Service, and basic HTTP Ingress
 - Backend Deployment and Service
+- PostgreSQL StatefulSet, Service, and persistent volume claim
 - Redis Deployment and Service
 - Shared ConfigMap and placeholder Secret
 
@@ -23,6 +24,23 @@ The current baseline manifests use `latest` for compatibility with the initial k
 
 Use `docs/deployment.md` for the manual k3s rollout handoff.
 
+## Database Configuration
+
+PostgreSQL runs as the `postgres` Service on port `5432` and stores data in the `postgres-data` volume claim created by the StatefulSet.
+
+The backend receives database settings from `marketpulse-config` and `marketpulse-secrets`:
+
+- `POSTGRES_DB`
+- `POSTGRES_HOST`
+- `POSTGRES_PORT`
+- `POSTGRES_USER`
+- `POSTGRES_PASSWORD`
+- `DATABASE_URL`
+
+Replace the `DATABASE_URL` and `POSTGRES_PASSWORD` placeholder values in `infra/k8s/01-config.yaml` before applying these manifests to a shared cluster.
+
+The backend readiness probe still uses `/health` because PostgreSQL-aware readiness is implemented by backend TASK-06. After that endpoint exists, update `infra/k8s/03-backend.yaml` to point readiness at the database-aware readiness path while keeping liveness independent of PostgreSQL.
+
 ## Validate
 
 ```sh
@@ -36,3 +54,18 @@ kubectl apply -f infra/k8s
 ```
 
 The frontend Ingress uses `marketpulse.byhoon.co.kr` over HTTP. HTTPS and cert-manager are intentionally left for a later task.
+
+## Troubleshooting
+
+Check database rollout and readiness:
+
+```sh
+kubectl -n marketpulse rollout status statefulset/postgres
+kubectl -n marketpulse exec statefulset/postgres -- pg_isready -U marketpulse -d marketpulse
+```
+
+Inspect persistent storage:
+
+```sh
+kubectl -n marketpulse get pvc
+```
