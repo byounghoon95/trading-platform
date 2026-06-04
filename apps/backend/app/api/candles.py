@@ -8,6 +8,7 @@ from app.clients.binance import (
     BinanceClientError,
     InvalidMarketDataRequestError,
 )
+from app.clients.postgres import DatabaseClientError
 from app.schemas.candles import CandleResponse, create_candle_response
 from app.services.candles import list_candles
 
@@ -36,6 +37,14 @@ async def list_candles_endpoint(
             detail={
                 "code": "market_data_unavailable",
                 "message": "Market data provider request failed",
+            },
+        ) from error
+    except DatabaseClientError as error:
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "code": "data_store_unavailable",
+                "message": "Market data store is unavailable",
             },
         ) from error
 

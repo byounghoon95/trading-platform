@@ -4,6 +4,7 @@ from decimal import Decimal
 from fastapi.testclient import TestClient
 
 from app.clients.binance import BinanceClientError, CandleDTO, InvalidMarketDataRequestError
+from app.clients.postgres import DatabaseClientError
 from app.main import app
 
 
@@ -109,5 +110,23 @@ def test_candles_endpoint_returns_bad_gateway_for_provider_failure(monkeypatch) 
         "detail": {
             "code": "market_data_unavailable",
             "message": "Market data provider request failed",
+        }
+    }
+
+
+def test_candles_endpoint_returns_unavailable_for_database_failure(monkeypatch) -> None:
+    async def list_candles_stub(symbol: str, interval: str, limit: int) -> list[CandleDTO]:
+        raise DatabaseClientError("database failed")
+
+    monkeypatch.setattr("app.api.candles.list_candles", list_candles_stub)
+    test_client = TestClient(app)
+
+    response = test_client.get("/api/candles?symbol=BTCUSDT&interval=1m&limit=1")
+
+    assert response.status_code == 503
+    assert response.json() == {
+        "detail": {
+            "code": "data_store_unavailable",
+            "message": "Market data store is unavailable",
         }
     }

@@ -56,7 +56,7 @@ Status values come from `## Status Values` above. Update this column **and** the
 | backend TASK-03 | ✅ done | backend TASK-01 | [03-binance-candle-client.md](backend/03-binance-candle-client.md) |
 | backend TASK-04 | ✅ done | backend TASK-02, backend TASK-03 | [04-normalized-candle-endpoint.md](backend/04-normalized-candle-endpoint.md) |
 | backend TASK-05 | ✅ done | backend TASK-03 | [05-market-ticker-endpoints.md](backend/05-market-ticker-endpoints.md) |
-| backend TASK-06 | ⬜ todo | backend TASK-04, backend TASK-05 | [06-postgresql-market-data-persistence.md](backend/06-postgresql-market-data-persistence.md) |
+| backend TASK-06 | ✅ done | backend TASK-04, backend TASK-05 | [06-postgresql-market-data-persistence.md](backend/06-postgresql-market-data-persistence.md) |
 | backend TASK-07 | ⬜ todo | backend TASK-06 | [07-redis-response-caching.md](backend/07-redis-response-caching.md) |
 | infra TASK-01 | ✅ done | foundation TASK-01 | [01-docker-compose-baseline.md](infra/01-docker-compose-baseline.md) |
 | infra TASK-02 | ✅ done | frontend TASK-01, backend TASK-01 | [02-production-dockerfiles.md](infra/02-production-dockerfiles.md) |

@@ -6,6 +6,7 @@ from app.clients.binance import (
     BinanceClientError,
     InvalidMarketDataRequestError,
 )
+from app.clients.postgres import DatabaseClientError
 from app.schemas.ticker import TickerResponse, create_ticker_response
 from app.services.ticker import get_ticker
 
@@ -32,6 +33,14 @@ async def get_ticker_endpoint(
             detail={
                 "code": "market_data_unavailable",
                 "message": "Market data provider request failed",
+            },
+        ) from error
+    except DatabaseClientError as error:
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "code": "data_store_unavailable",
+                "message": "Market data store is unavailable",
             },
         ) from error
 
