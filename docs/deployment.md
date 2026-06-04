@@ -1,6 +1,6 @@
 # Deployment
 
-MarketPulse deploys to k3s with the manifests in `infra/k8s`.
+MarketPulse deploys to k3s with the Helm chart in `infra/helm/marketpulse`.
 
 ## Image Build Workflow
 
@@ -14,28 +14,51 @@ Images:
 Tags:
 
 - `sha-<git-sha>` for immutable handoff deploys
-- `latest` for compatibility with the current k3s manifests
+- `latest` is pushed for compatibility, but Helm rollout should use immutable `sha-<git-sha>` tags.
 
 Required repository settings:
 
 - `DOCKERHUB_USERNAME`: Docker Hub username with push access to the `leebyonghoon` namespace.
 - `DOCKERHUB_TOKEN`: Docker Hub access token with permission to push images.
 
-No production secrets are required for this workflow.
+No production Kubernetes secrets are required for the image build workflow.
+
+## Database Secret
+
+The Helm chart defaults to using an existing Kubernetes Secret named `marketpulse-secrets`. Create or update it before installing the chart:
+
+```sh
+kubectl create namespace marketpulse --dry-run=client -o yaml | kubectl apply -f -
+
+kubectl -n marketpulse create secret generic marketpulse-secrets \
+  --from-literal=POSTGRES_USER=marketpulse \
+  --from-literal=POSTGRES_PASSWORD='<postgres-password>' \
+  --from-literal=DATABASE_URL='postgresql://marketpulse:<postgres-password>@postgres:5432/marketpulse' \
+  --dry-run=client -o yaml | kubectl apply -f -
+```
+
+Do not commit real database passwords. `infra/helm/marketpulse/values.secret.example.yaml` is only an example for local/manual installs.
 
 ## Manual k3s Rollout
 
-After the image workflow succeeds, deploy a specific commit by setting both workload images to the matching `sha-<git-sha>` tag.
+After the image workflow succeeds, deploy a specific commit by setting both workload image tags to the matching `sha-<git-sha>` tag.
 
 ```sh
-kubectl -n marketpulse set image deployment/backend \
-  backend=leebyonghoon/marketpulse-backend:sha-<git-sha>
+helm upgrade --install marketpulse infra/helm/marketpulse \
+  --namespace marketpulse \
+  --create-namespace \
+  --set backend.image.tag=sha-<git-sha> \
+  --set frontend.image.tag=sha-<git-sha>
+```
 
-kubectl -n marketpulse set image deployment/frontend \
-  frontend=leebyonghoon/marketpulse-frontend:sha-<git-sha>
+Wait for rollouts:
 
+```sh
+kubectl -n marketpulse rollout status statefulset/postgres
 kubectl -n marketpulse rollout status deployment/backend
 kubectl -n marketpulse rollout status deployment/frontend
+kubectl -n marketpulse rollout status deployment/prometheus
+kubectl -n marketpulse rollout status deployment/grafana
 ```
 
 Check the public endpoints:
@@ -45,16 +68,20 @@ curl -I http://marketpulse.byhoon.co.kr/
 curl -i "http://marketpulse.byhoon.co.kr/api/candles?symbol=BTCUSDT&interval=1m&limit=1"
 ```
 
-Automated SSH deployment is intentionally deferred to infra TASK-09.
+## Rollback
 
-## PostgreSQL Runtime
-
-The k3s manifests include a single PostgreSQL StatefulSet exposed through the in-cluster `postgres` Service. The backend reads PostgreSQL configuration from `marketpulse-config` and `marketpulse-secrets`, including `DATABASE_URL`.
-
-Before deploying to a shared cluster, replace the placeholder PostgreSQL password values in `infra/k8s/01-config.yaml`:
+List Helm revisions:
 
 ```sh
-kubectl apply -f infra/k8s
-kubectl -n marketpulse rollout status statefulset/postgres
-kubectl -n marketpulse rollout status deployment/backend
+helm history marketpulse -n marketpulse
 ```
+
+Roll back to a known-good revision:
+
+```sh
+helm rollback marketpulse <revision> -n marketpulse
+kubectl -n marketpulse rollout status deployment/backend
+kubectl -n marketpulse rollout status deployment/frontend
+```
+
+Automated SSH or GitOps deployment remains deferred to infra TASK-09.

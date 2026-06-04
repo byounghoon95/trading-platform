@@ -1,0 +1,89 @@
+nameOverride: ""
+fullnameOverride: ""
+
+namespace:
+  create: false
+  name: marketpulse
+
+config:
+  marketpulseEnv: production
+  postgresDb: marketpulse
+  postgresHost: postgres
+  postgresPort: "5432"
+  redisUrl: redis://redis:6379/0
+
+secrets:
+  existingSecret: marketpulse-secrets
+  create: false
+  postgresUser: marketpulse
+  postgresPassword: ""
+  databaseUrl: ""
+
+backend:
+  replicaCount: 1
+  image:
+    repository: leebyonghoon/marketpulse-backend
+    tag: sha-replace-me
+    pullPolicy: Always
+  service:
+    port: 8000
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /metrics
+    prometheus.io/port: "8000"
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: leebyonghoon/marketpulse-frontend
+    tag: sha-replace-me
+    pullPolicy: Always
+  service:
+    port: 80
+  containerPort: 8080
+
+postgresql:
+  enabled: true
+  image:
+    repository: postgres
+    tag: 16-alpine
+    pullPolicy: IfNotPresent
+  service:
+    port: 5432
+  persistence:
+    enabled: true
+    size: 1Gi
+    accessModes:
+      - ReadWriteOnce
+
+redis:
+  enabled: true
+  image:
+    repository: redis
+    tag: 7.4-alpine
+    pullPolicy: IfNotPresent
+  service:
+    port: 6379
+
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+  host: marketpulse.byhoon.co.kr
+
+monitoring:
+  enabled: true
+  prometheus:
+    image:
+      repository: prom/prometheus
+      tag: v2.55.1
+      pullPolicy: IfNotPresent
+    host: prometheus.marketpulse.byhoon.co.kr
+    retention: 7d
+  grafana:
+    image:
+      repository: grafana/grafana
+      tag: 11.3.1
+      pullPolicy: IfNotPresent
+    host: grafana.marketpulse.byhoon.co.kr

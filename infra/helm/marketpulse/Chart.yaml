@@ -1,0 +1,6 @@
+apiVersion: v2
+name: marketpulse
+description: Helm chart for the MarketPulse k3s runtime.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
