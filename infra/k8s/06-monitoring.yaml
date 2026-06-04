@@ -546,3 +546,26 @@ spec:
     - name: http
       port: 3000
       targetPort: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana
+  namespace: marketpulse
+  labels:
+    app.kubernetes.io/name: marketpulse
+    app.kubernetes.io/component: grafana
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  rules:
+    - host: grafana.marketpulse.byhoon.co.kr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  name: http

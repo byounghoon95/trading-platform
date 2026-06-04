@@ -36,7 +36,7 @@ Grafana:
 
 - Uses the in-cluster Prometheus service as the default data source.
 - Provisions the `MarketPulse Operations` dashboard from a ConfigMap.
-- Runs inside the cluster only and is not exposed through Ingress.
+- Exposes the Grafana UI through HTTP Ingress at `grafana.marketpulse.byhoon.co.kr`.
 
 Deploy or update monitoring:
 
@@ -46,10 +46,11 @@ kubectl rollout status deployment/prometheus -n marketpulse
 kubectl rollout status deployment/grafana -n marketpulse
 ```
 
-Public Prometheus access requires a DNS record pointing at the k3s ingress node:
+Public monitoring access requires DNS records pointing at the k3s ingress node:
 
 ```text
 prometheus.marketpulse.byhoon.co.kr. A 144.91.100.165
+grafana.marketpulse.byhoon.co.kr.    A 144.91.100.165
 ```
 
 Validate Prometheus targets:
@@ -59,15 +60,17 @@ kubectl port-forward -n marketpulse service/prometheus 9090:9090
 curl http://localhost:9090/api/v1/targets
 ```
 
-Open Grafana locally:
+Open Grafana locally or through the public Ingress:
 
 ```bash
 kubectl port-forward -n marketpulse service/grafana 3000:3000
 ```
 
-Then open `http://localhost:3000` and sign in with Grafana's development default credentials:
+Then open `http://localhost:3000` or `http://grafana.marketpulse.byhoon.co.kr` and sign in with Grafana's development default credentials:
 
 - Username: `admin`
 - Password: `admin`
+
+Change the default password after the first public login.
 
 The dashboard artifact also lives at `infra/monitoring/grafana/marketpulse-dashboard.json` for manual import or review.
