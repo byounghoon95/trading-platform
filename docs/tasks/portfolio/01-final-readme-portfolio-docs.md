@@ -35,6 +35,7 @@ Create the final README and portfolio-ready documentation.
 - infra TASK-08
 - infra TASK-09
 - infra TASK-10
+- infra TASK-11
 
 ## Out of Scope
 

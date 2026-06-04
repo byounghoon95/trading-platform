@@ -8,7 +8,7 @@ The goal is not to build a full trading service with accounts, orders, payments,
 
 The project should stay compact, but it should not be only a local demo. The implementation should progress in two layers:
 
-- MVP: a working dashboard with normalized market data, caching, local Docker runtime, basic Kubernetes manifests, and CI checks.
+- MVP: a working dashboard with normalized market data, caching, local Docker runtime, Helm-based k3s deployment, and CI checks.
 - Advanced ops layer: production-style deployment, HTTPS ingress, metrics, dashboards, and deployment automation that show operational capability without expanding into trading features.
 
 Working name: `MarketPulse`
@@ -27,9 +27,9 @@ Primary signals:
 - Backend can integrate with an external market data API and normalize data.
 - System can handle caching, rate limits, health checks, and failure states.
 - Application can run locally with Docker Compose.
-- Application can be deployed to k3s with Kubernetes manifests or Helm.
+- Application can be deployed to k3s with Helm.
 - CI/CD can test, build, and package the application.
-- Advanced CI/CD can push images and deploy or hand off to k3s manifests.
+- Advanced CI/CD can push images and deploy or hand off to Helm release updates.
 - Basic operational health checks, logging, and troubleshooting documentation exist.
 - Advanced observability can show metrics and dashboards.
 
@@ -113,7 +113,7 @@ Advanced real-time behavior:
 - Dockerfile for frontend
 - Dockerfile for backend
 - Docker Compose for local development
-- k3s deployment manifests or Helm chart
+- Helm chart for k3s deployment
 - Basic Ingress for k3s deployment
 - ConfigMap and Secret usage
 - Readiness and liveness probes
@@ -540,7 +540,7 @@ The `$requesting-code-review` skill should review the completed task against the
 
 - infra TASK-01: Add Docker Compose baseline
 - infra TASK-02: Add production Dockerfiles
-- infra TASK-03: Add k3s manifests
+- infra TASK-03: Add baseline k3s manifests
 - infra TASK-04: Add GitHub Actions CI
 - infra TASK-05: Add image build and deploy workflow
 - infra TASK-06: Add metrics endpoint and Prometheus scrape configuration
@@ -548,6 +548,7 @@ The `$requesting-code-review` skill should review the completed task against the
 - infra TASK-08: Add HTTPS ingress with cert-manager
 - infra TASK-09: Add k3s deployment automation
 - infra TASK-10: Add PostgreSQL runtime
+- infra TASK-11: Replace k3s manifests with Helm
 
 ### Portfolio Track
 
@@ -571,7 +572,7 @@ The portfolio version is done when:
 - PostgreSQL persistence is implemented and documented.
 - Redis caching is implemented and documented as a short-lived performance layer.
 - Docker images build successfully.
-- k3s manifests can deploy the app with frontend, backend, PostgreSQL, Redis, probes, and ingress.
+- Helm can deploy the app to k3s with frontend, backend, PostgreSQL, Redis, probes, and ingress.
 - CI runs tests and builds images.
 - README explains architecture, local run, deployment, and tradeoffs.
 - At least one operational issue or troubleshooting case is documented.

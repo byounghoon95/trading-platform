@@ -1,15 +1,19 @@
+{{- if .Values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: marketpulse
-  namespace: marketpulse
+  namespace: {{ include "marketpulse.namespace" . }}
   labels:
-    app.kubernetes.io/name: marketpulse
+    {{- include "marketpulse.labels" . | nindent 4 }}
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
 spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
   rules:
-    - host: marketpulse.byhoon.co.kr
+    - host: {{ .Values.ingress.host }}
       http:
         paths:
           - path: /api
@@ -26,3 +30,4 @@ spec:
                 name: frontend
                 port:
                   name: http
+{{- end }}

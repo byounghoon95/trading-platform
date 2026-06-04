@@ -12,14 +12,14 @@ Automate or clearly formalize deployment from GitHub Actions to the k3s cluster.
 
 - Choose SSH-based deployment or GitOps handoff
 - Document required GitHub secrets
-- Deploy versioned GHCR images to k3s
+- Deploy versioned Docker Hub images to k3s through Helm
 - Add rollout and rollback commands
 - Keep the workflow understandable for portfolio review
 
 ## Files Expected To Change
 
 - `.github/workflows/deploy.yml`
-- `infra/k8s/kustomization.yaml`
+- `infra/helm/marketpulse/values.yaml`
 - `docs/deployment.md`
 - `README.md`
 
@@ -31,7 +31,7 @@ Automate or clearly formalize deployment from GitHub Actions to the k3s cluster.
 
 ## Acceptance Criteria
 
-- GitHub Actions can deploy or update manifests for k3s.
+- GitHub Actions can deploy or update the Helm release for k3s.
 - Required secrets and cluster assumptions are documented.
 - Rollback steps are documented.
 - Workflow does not expose credentials in logs.
@@ -39,5 +39,5 @@ Automate or clearly formalize deployment from GitHub Actions to the k3s cluster.
 ## Verification
 
 - Review GitHub Actions workflow syntax
+- `helm template marketpulse infra/helm/marketpulse --namespace marketpulse`
 - `kubectl rollout status deployment/<name> -n <namespace>` after deployment when a cluster is available
-
