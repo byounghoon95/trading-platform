@@ -2,7 +2,7 @@
 
 ## Status
 
-todo
+done
 
 ## Goal
 
@@ -43,3 +43,10 @@ Expose backend operational metrics and provide Prometheus scrape configuration f
 - `curl http://localhost:<backend-port>/metrics`
 - `kubectl apply --dry-run=client -f infra/k8s`
 
+## Completion Notes
+
+- Status: done
+- Skills used: implement-task
+- Changed: added backend Prometheus text metrics, request/latency/external failure instrumentation, `/metrics` endpoint, backend scrape annotations, operations notes, and focused metrics tests.
+- Verification: `uv run --extra dev pytest` -> 22 passed; `uv run --extra dev ruff check .` -> all checks passed; `curl http://127.0.0.1:8001/metrics` -> returned Prometheus text including health and request metrics; `kubectl apply --dry-run=client -f infra/k8s` -> all manifests configured in client dry-run.
+- Notes: used annotation-based Prometheus discovery so the MVP manifests do not require Prometheus Operator CRDs; Grafana dashboards remain out of scope for infra TASK-07.

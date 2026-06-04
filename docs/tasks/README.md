@@ -65,7 +65,7 @@ Status values come from `## Status Values` above. Update this column **and** the
 | infra TASK-05 | ✅ done | infra TASK-02, infra TASK-03, infra TASK-04 | [05-image-build-deploy-workflow.md](infra/05-image-build-deploy-workflow.md) |
 | backend TASK-08 | ⬜ todo | backend TASK-07 | [08-websocket-price-stream.md](backend/08-websocket-price-stream.md) |
 | frontend TASK-04 | ⬜ todo | frontend TASK-03, backend TASK-08 | [04-websocket-price-client.md](frontend/04-websocket-price-client.md) |
-| infra TASK-06 | ⬜ todo | backend TASK-04, backend TASK-05, infra TASK-03 | [06-metrics-prometheus.md](infra/06-metrics-prometheus.md) |
+| infra TASK-06 | ✅ done | backend TASK-04, backend TASK-05, infra TASK-03 | [06-metrics-prometheus.md](infra/06-metrics-prometheus.md) |
 | infra TASK-07 | ⬜ todo | infra TASK-06 | [07-grafana-dashboard.md](infra/07-grafana-dashboard.md) |
 | infra TASK-08 | ⬜ todo | infra TASK-03 | [08-https-cert-manager.md](infra/08-https-cert-manager.md) |
 | infra TASK-09 | ⬜ todo | infra TASK-05, infra TASK-08 | [09-k3s-deploy-automation.md](infra/09-k3s-deploy-automation.md) |
