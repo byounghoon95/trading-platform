@@ -20,7 +20,7 @@ Expected metric families include:
 - `marketpulse_health_status`
 - `marketpulse_external_api_failures_total`
 
-The Kubernetes backend Service and backend pod template include basic Prometheus scrape annotations for annotation-based discovery. This avoids requiring Prometheus Operator CRDs in the MVP k3s manifests.
+The Helm chart renders the backend Service and backend pod template with basic Prometheus scrape annotations for annotation-based discovery. This avoids requiring Prometheus Operator CRDs in the MVP k3s runtime.
 
 ## Backend PostgreSQL Persistence
 
@@ -37,11 +37,11 @@ Liveness and readiness are separate:
 - `GET /health` stays independent of PostgreSQL and returns liveness.
 - `GET /ready` checks PostgreSQL and returns 503 when `DATABASE_URL` is missing or the database is unreachable.
 
-Docker Compose and k3s PostgreSQL runtime wiring are tracked by infra TASK-10.
+Docker Compose and k3s PostgreSQL runtime wiring are tracked by infra TASK-10. Helm deployment wiring is tracked by infra TASK-11.
 
 ## Prometheus And Grafana
 
-`infra/k8s/06-monitoring.yaml` deploys a compact Prometheus and Grafana runtime in the `marketpulse` namespace.
+The Helm chart deploys a compact Prometheus and Grafana runtime in the `marketpulse` namespace.
 
 Prometheus:
 
@@ -55,10 +55,10 @@ Grafana:
 - Provisions the `MarketPulse Operations` dashboard from a ConfigMap.
 - Exposes the Grafana UI through HTTP Ingress at `grafana.marketpulse.byhoon.co.kr`.
 
-Deploy or update monitoring:
+Deploy or update monitoring with the rest of the release:
 
 ```bash
-kubectl apply -f infra/k8s/06-monitoring.yaml
+helm upgrade --install marketpulse infra/helm/marketpulse --namespace marketpulse
 kubectl rollout status deployment/prometheus -n marketpulse
 kubectl rollout status deployment/grafana -n marketpulse
 ```
@@ -90,7 +90,7 @@ Then open `http://localhost:3000` or `http://grafana.marketpulse.byhoon.co.kr` a
 
 Change the default password after the first public login.
 
-The dashboard artifact also lives at `infra/monitoring/grafana/marketpulse-dashboard.json` for manual import or review.
+The dashboard artifact is packaged at `infra/helm/marketpulse/files/grafana/marketpulse-dashboard.json` for chart rendering and manual review.
 
 ## PostgreSQL Runtime
 
@@ -103,7 +103,7 @@ docker compose -f infra/docker/compose.yaml ps postgres
 docker compose -f infra/docker/compose.yaml exec postgres pg_isready -U marketpulse -d marketpulse
 ```
 
-In k3s, PostgreSQL runs as `statefulset/postgres` in the `marketpulse` namespace and stores data in a persistent volume claim.
+In k3s, Helm renders PostgreSQL as `statefulset/postgres` in the `marketpulse` namespace and stores data in a persistent volume claim.
 
 Useful cluster checks:
 

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: marketpulse-config
+  namespace: {{ include "marketpulse.namespace" . }}
+  labels:
+    {{- include "marketpulse.labels" . | nindent 4 }}
+data:
+  MARKETPULSE_ENV: {{ .Values.config.marketpulseEnv | quote }}
+  POSTGRES_DB: {{ .Values.config.postgresDb | quote }}
+  POSTGRES_HOST: {{ .Values.config.postgresHost | quote }}
+  POSTGRES_PORT: {{ .Values.config.postgresPort | quote }}
+  REDIS_URL: {{ .Values.config.redisUrl | quote }}

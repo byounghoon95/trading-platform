@@ -31,7 +31,7 @@ Cache recent candle and ticker responses in Redis after PostgreSQL persistence i
 - Redis stores only short-lived recent responses; PostgreSQL remains the durable store.
 - Cache keys and TTLs are documented or tested.
 - Readiness fails (HTTP 503 or equivalent) when Redis is unreachable; liveness still returns 200.
-- `infra/k8s` readiness probe target is updated if a new path is introduced (note for the matching infra task).
+- Helm readiness probe values/templates are updated if a new path is introduced (note for the matching infra task).
 
 ## Verification
 

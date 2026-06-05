@@ -1,0 +1,18 @@
+{{- if .Values.certManager.issuer.enabled }}
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ .Values.certManager.issuer.name }}
+  labels:
+    {{- include "marketpulse.labels" . | nindent 4 }}
+spec:
+  acme:
+    email: {{ required "certManager.issuer.email is required when certManager.issuer.enabled=true" .Values.certManager.issuer.email }}
+    server: {{ .Values.certManager.issuer.server }}
+    privateKeySecretRef:
+      name: {{ .Values.certManager.issuer.privateKeySecretName }}
+    solvers:
+      - http01:
+          ingress:
+            class: {{ .Values.certManager.issuer.ingressClass }}
+{{- end }}
