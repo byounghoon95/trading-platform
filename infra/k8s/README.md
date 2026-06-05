@@ -41,6 +41,21 @@ Replace the `DATABASE_URL` and `POSTGRES_PASSWORD` placeholder values in `infra/
 
 The backend readiness probe uses `/ready` so rollout readiness depends on PostgreSQL connectivity. Liveness stays on `/health` so Kubernetes does not restart the backend only because PostgreSQL is temporarily unavailable.
 
+## HTTPS
+
+The base manifests keep the frontend Ingress on HTTP so local k3s clusters can apply `infra/k8s` without cert-manager.
+
+Production HTTPS manifests live in `infra/k8s/https`:
+
+- `cert-manager-issuer.yaml` defines a Let's Encrypt `ClusterIssuer`.
+- `ingress.yaml` reapplies the frontend Ingress with TLS enabled.
+
+Before applying the HTTPS manifests, install cert-manager, point DNS for the chosen host at the k3s ingress node, and replace these placeholder values:
+
+- `ops@example.com` in `infra/k8s/https/cert-manager-issuer.yaml`
+- `marketpulse.example.com` in `infra/k8s/https/ingress.yaml`
+- `letsencrypt-production` and `marketpulse-tls` if your cluster uses different issuer or Secret names
+
 ## Validate
 
 ```sh
@@ -53,7 +68,12 @@ kubectl apply --dry-run=client -f infra/k8s
 kubectl apply -f infra/k8s
 ```
 
-The frontend Ingress uses `marketpulse.byhoon.co.kr` over HTTP. HTTPS and cert-manager are intentionally left for a later task.
+The base frontend Ingress uses `marketpulse.byhoon.co.kr` over HTTP. For HTTPS, configure the placeholders above and apply the HTTPS manifests after cert-manager is ready:
+
+```sh
+kubectl apply -f infra/k8s/https
+kubectl -n marketpulse describe certificate marketpulse-tls
+```
 
 ## Troubleshooting
 

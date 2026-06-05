@@ -47,6 +47,41 @@ curl -i "http://marketpulse.byhoon.co.kr/api/candles?symbol=BTCUSDT&interval=1m&
 
 Automated SSH deployment is intentionally deferred to infra TASK-09.
 
+## HTTPS With cert-manager
+
+The base k3s manifests keep HTTP ingress usable for local clusters. Production HTTPS is layered on with cert-manager manifests in `infra/k8s/https`.
+
+Prerequisites:
+
+- cert-manager installed in the cluster, including the `cert-manager.io/v1` CRDs.
+- The k3s ingress controller can receive public HTTP traffic on port 80 for ACME HTTP-01 challenges.
+- DNS for the chosen frontend hostname points at the k3s ingress node.
+- A real ACME contact email is configured in `infra/k8s/https/cert-manager-issuer.yaml`.
+
+Before applying HTTPS, replace the sample values:
+
+- `ops@example.com` with the ACME contact email.
+- `marketpulse.example.com` with the frontend DNS hostname.
+- `letsencrypt-production` if the cluster already has a different cert-manager issuer name.
+- `marketpulse-tls` if a different TLS Secret name is preferred.
+
+Apply the base manifests first, then apply the HTTPS manifests:
+
+```sh
+kubectl apply -f infra/k8s
+kubectl apply -f infra/k8s/https
+kubectl -n marketpulse describe certificate marketpulse-tls
+```
+
+After cert-manager issues the certificate, check the HTTPS endpoint:
+
+```sh
+curl -I https://marketpulse.example.com/
+curl -i "https://marketpulse.example.com/api/candles?symbol=BTCUSDT&interval=1m&limit=1"
+```
+
+Leave `infra/k8s/05-ingress.yaml` in place for local and non-HTTPS development clusters.
+
 ## PostgreSQL Runtime
 
 The k3s manifests include a single PostgreSQL StatefulSet exposed through the in-cluster `postgres` Service. The backend reads PostgreSQL configuration from `marketpulse-config` and `marketpulse-secrets`, including `DATABASE_URL`.
