@@ -13,3 +13,5 @@ helm upgrade --install marketpulse infra/helm/marketpulse \
 ```
 
 Production database credentials must be created as a Kubernetes Secret before installing the chart, or supplied with `secrets.create=true` at install time. Do not commit real secret values.
+
+HTTPS ingress is configured through Helm values in `infra/helm/marketpulse`. See `docs/deployment.md` for the cert-manager prerequisites and install command.

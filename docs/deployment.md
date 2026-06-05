@@ -68,8 +68,41 @@ curl -I http://marketpulse.byhoon.co.kr/
 curl -i "http://marketpulse.byhoon.co.kr/api/candles?symbol=BTCUSDT&interval=1m&limit=1"
 ```
 
-## Rollback
+## HTTPS With cert-manager
 
+The Helm chart keeps HTTP ingress enabled by default so local k3s clusters can install the release without cert-manager. Production HTTPS is enabled with chart values.
+
+Prerequisites:
+
+- cert-manager installed in the cluster, including the `cert-manager.io/v1` CRDs.
+- The k3s ingress controller can receive public HTTP traffic on port 80 for ACME HTTP-01 challenges.
+- DNS for the chosen frontend hostname points at the k3s ingress node.
+- A real ACME contact email is configured with `certManager.issuer.email`.
+
+Enable HTTPS for the frontend Ingress:
+
+```sh
+helm upgrade --install marketpulse infra/helm/marketpulse \
+  --namespace marketpulse \
+  --create-namespace \
+  --set-string 'ingress.host=marketpulse.byhoon.co.kr' \
+  --set 'ingress.tls.enabled=true' \
+  --set-string 'ingress.tls.secretName=marketpulse-tls' \
+  --set-string 'ingress.tls.hosts[0]=marketpulse.byhoon.co.kr' \
+  --set 'certManager.issuer.enabled=true' \
+  --set-string 'certManager.issuer.name=letsencrypt-production' \
+  --set-string 'certManager.issuer.email=<your-email@example.com>'
+```
+
+After cert-manager issues the certificate, check the HTTPS endpoint:
+
+```sh
+kubectl -n marketpulse describe certificate marketpulse-tls
+curl -I https://marketpulse.byhoon.co.kr/
+curl -i "https://marketpulse.byhoon.co.kr/api/candles?symbol=BTCUSDT&interval=1m&limit=1"
+```
+
+## Rollback
 List Helm revisions:
 
 ```sh

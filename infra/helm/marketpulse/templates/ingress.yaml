@@ -1,4 +1,9 @@
 {{- if .Values.ingress.enabled }}
+{{- $annotations := deepCopy .Values.ingress.annotations }}
+{{- if .Values.ingress.tls.enabled }}
+{{- $_ := set $annotations "cert-manager.io/cluster-issuer" .Values.certManager.issuer.name }}
+{{- $_ := set $annotations "traefik.ingress.kubernetes.io/router.entrypoints" "web,websecure" }}
+{{- end }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -7,10 +12,16 @@ metadata:
   labels:
     {{- include "marketpulse.labels" . | nindent 4 }}
   annotations:
-    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+    {{- toYaml $annotations | nindent 4 }}
 spec:
   {{- if .Values.ingress.className }}
   ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        {{- toYaml .Values.ingress.tls.hosts | nindent 8 }}
+      secretName: {{ .Values.ingress.tls.secretName }}
   {{- end }}
   rules:
     - host: {{ .Values.ingress.host }}
