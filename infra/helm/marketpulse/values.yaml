@@ -1,6 +1,9 @@
 nameOverride: ""
 fullnameOverride: ""
 
+# Deploy automation overrides backend.image.tag and frontend.image.tag with
+# immutable sha-* tags built by the Images workflow. Keep these defaults as
+# placeholders so manual installs choose an explicit app image version.
 namespace:
   create: false
   name: marketpulse

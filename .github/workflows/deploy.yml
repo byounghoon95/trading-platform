@@ -1,0 +1,124 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Immutable Docker image tag to deploy, for example sha-a1e898a. Defaults to this workflow commit."
+        required: false
+        type: string
+  workflow_run:
+    workflows:
+      - Images
+    branches:
+      - main
+    types:
+      - completed
+
+concurrency:
+  group: deploy-marketpulse-k3s
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  CHART_ARCHIVE: marketpulse-chart.tgz
+  NAMESPACE: marketpulse
+  RELEASE_NAME: marketpulse
+  SSH_PORT: ${{ vars.K3S_SSH_PORT || '22' }}
+
+jobs:
+  deploy:
+    name: Deploy to k3s
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Resolve image tag
+        id: image-tag
+        env:
+          MANUAL_IMAGE_TAG: ${{ inputs.image_tag }}
+          SOURCE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+        run: |
+          set -euo pipefail
+
+          if [[ -n "${MANUAL_IMAGE_TAG}" ]]; then
+            image_tag="${MANUAL_IMAGE_TAG}"
+          else
+            image_tag="sha-${SOURCE_SHA:0:7}"
+          fi
+
+          if [[ ! "${image_tag}" =~ ^sha-[0-9a-fA-F]{7,40}$ ]]; then
+            echo "Image tag must be an immutable sha-* tag." >&2
+            exit 1
+          fi
+
+          echo "image_tag=${image_tag}" >> "${GITHUB_OUTPUT}"
+
+      - name: Configure SSH
+        env:
+          SSH_KNOWN_HOSTS: ${{ secrets.K3S_SSH_KNOWN_HOSTS }}
+          SSH_PRIVATE_KEY: ${{ secrets.K3S_SSH_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${SSH_PRIVATE_KEY}" > ~/.ssh/k3s_deploy_key
+          chmod 600 ~/.ssh/k3s_deploy_key
+          printf '%s\n' "${SSH_KNOWN_HOSTS}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Package Helm chart
+        run: tar -czf "${CHART_ARCHIVE}" -C infra/helm marketpulse
+
+      - name: Copy Helm chart to k3s host
+        env:
+          SSH_HOST: ${{ secrets.K3S_SSH_HOST }}
+          SSH_USER: ${{ secrets.K3S_SSH_USER }}
+        run: |
+          set -euo pipefail
+
+          scp \
+            -P "${SSH_PORT}" \
+            -i ~/.ssh/k3s_deploy_key \
+            -o IdentitiesOnly=yes \
+            "${CHART_ARCHIVE}" \
+            "${SSH_USER}@${SSH_HOST}:/tmp/marketpulse-chart-${GITHUB_RUN_ID}.tgz"
+
+      - name: Deploy Helm release
+        env:
+          IMAGE_TAG: ${{ steps.image-tag.outputs.image_tag }}
+          SSH_HOST: ${{ secrets.K3S_SSH_HOST }}
+          SSH_USER: ${{ secrets.K3S_SSH_USER }}
+        run: |
+          set -euo pipefail
+
+          ssh \
+            -p "${SSH_PORT}" \
+            -i ~/.ssh/k3s_deploy_key \
+            -o IdentitiesOnly=yes \
+            "${SSH_USER}@${SSH_HOST}" \
+            "REMOTE_ARCHIVE='/tmp/marketpulse-chart-${GITHUB_RUN_ID}.tgz' REMOTE_CHART_DIR='/tmp/marketpulse-chart-${GITHUB_RUN_ID}' IMAGE_TAG='${IMAGE_TAG}' RELEASE_NAME='${RELEASE_NAME}' NAMESPACE='${NAMESPACE}' bash -s" <<'REMOTE'
+          set -euo pipefail
+
+          rm -rf "${REMOTE_CHART_DIR}"
+          mkdir -p "${REMOTE_CHART_DIR}"
+          tar -xzf "${REMOTE_ARCHIVE}" -C "${REMOTE_CHART_DIR}" --strip-components=1
+
+          helm upgrade --install "${RELEASE_NAME}" "${REMOTE_CHART_DIR}" \
+            --namespace "${NAMESPACE}" \
+            --create-namespace \
+            --set-string backend.image.tag="${IMAGE_TAG}" \
+            --set-string frontend.image.tag="${IMAGE_TAG}"
+
+          kubectl -n "${NAMESPACE}" rollout status statefulset/postgres --timeout=180s
+          kubectl -n "${NAMESPACE}" rollout status deployment/backend --timeout=180s
+          kubectl -n "${NAMESPACE}" rollout status deployment/frontend --timeout=180s
+          kubectl -n "${NAMESPACE}" rollout status deployment/prometheus --timeout=180s
+          kubectl -n "${NAMESPACE}" rollout status deployment/grafana --timeout=180s
+
+          rm -rf "${REMOTE_CHART_DIR}" "${REMOTE_ARCHIVE}"
+          REMOTE

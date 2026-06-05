@@ -6,10 +6,11 @@ MarketPulse is a compact crypto market dashboard portfolio project.
 
 - Helm chart: `infra/helm/marketpulse`
 - Image build workflow: `.github/workflows/images.yml`
+- k3s deploy workflow: `.github/workflows/deploy.yml`
 - Deployment notes: `docs/deployment.md`
 - Operations and monitoring notes: `docs/operations.md`
 
-The image workflow pushes backend and frontend images to Docker Hub. k3s rollout is currently a documented manual handoff; automated deployment is planned for infra TASK-09.
+The image workflow pushes backend and frontend images to Docker Hub with immutable `sha-*` tags. The deploy workflow can update the k3s Helm release over SSH after a successful `Images` run on `main`, with manual Helm rollout and rollback commands documented in `docs/deployment.md`.
 
 ## Monitoring
 
