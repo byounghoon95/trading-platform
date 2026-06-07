@@ -9,7 +9,7 @@ MarketPulse is a compact crypto market dashboard portfolio project.
 - Deployment notes: `docs/deployment.md`
 - Operations and monitoring notes: `docs/operations.md`
 
-The image workflow pushes backend and frontend images to Docker Hub. k3s rollout is currently a documented manual handoff; automated deployment is planned for infra TASK-09.
+The image workflow pushes backend and frontend images to Docker Hub. The deploy workflow updates Helm image tags in a GitOps pull request; after that PR is merged, Argo CD syncs the Helm release into k3s.
 
 ## Monitoring
 

@@ -23,6 +23,49 @@ Required repository settings:
 
 No production Kubernetes secrets are required for the image build workflow.
 
+## GitOps Deploy Handoff
+
+The `Deploy` GitHub Actions workflow does not connect to the k3s cluster. It updates the backend and frontend image tags in `infra/helm/marketpulse/values.yaml` and opens a pull request. After that pull request is merged, Argo CD deploys the chart from `main`.
+
+Triggers:
+
+- After the `Images` workflow succeeds on `main`
+- Manual `workflow_dispatch` with an optional `image_tag`
+
+The image tag must match `sha-<git-sha>`. If no manual tag is provided, the workflow uses the source commit from the completed `Images` workflow or the dispatch commit.
+
+Required GitHub repository settings:
+
+- `Actions > General > Workflow permissions`: allow GitHub Actions to create pull requests and write repository contents.
+- `DOCKERHUB_USERNAME`: used by the `Images` workflow, not by the deploy handoff.
+- `DOCKERHUB_TOKEN`: used by the `Images` workflow, not by the deploy handoff.
+
+No kubeconfig, SSH key, Argo CD token, or cluster credential is stored in GitHub Actions for deployment.
+
+## Argo CD Application
+
+The Argo CD application manifest is `infra/argocd/marketpulse-application.yaml`. It assumes:
+
+- Argo CD is already installed in the k3s cluster.
+- The `argocd` namespace exists.
+- Argo CD can read `https://github.com/byounghoon95/trading-platform.git`.
+- The `marketpulse-secrets` Kubernetes Secret exists before the app becomes healthy.
+- cert-manager is installed before enabling HTTPS issuer values.
+
+Install or update the application from a machine with cluster access:
+
+```sh
+kubectl apply -f infra/argocd/marketpulse-application.yaml
+argocd app get marketpulse
+argocd app sync marketpulse
+```
+
+Check the GitOps diff before syncing when needed:
+
+```sh
+argocd app diff marketpulse
+```
+
 ## Database Secret
 
 The Helm chart defaults to using an existing Kubernetes Secret named `marketpulse-secrets`. Create or update it before installing the chart:
@@ -39,16 +82,13 @@ kubectl -n marketpulse create secret generic marketpulse-secrets \
 
 Do not commit real database passwords. `infra/helm/marketpulse/values.secret.example.yaml` is only an example for local/manual installs.
 
-## Manual k3s Rollout
+## Argo CD Rollout
 
-After the image workflow succeeds, deploy a specific commit by setting both workload image tags to the matching `sha-<git-sha>` tag.
+After the deploy handoff pull request is merged, Argo CD sees the updated `sha-*` tags in `values.yaml`. Sync the app if automated sync has not already applied it:
 
 ```sh
-helm upgrade --install marketpulse infra/helm/marketpulse \
-  --namespace marketpulse \
-  --create-namespace \
-  --set backend.image.tag=sha-<git-sha> \
-  --set frontend.image.tag=sha-<git-sha>
+argocd app sync marketpulse
+argocd app wait marketpulse --health --sync --timeout 300
 ```
 
 Wait for rollouts:
@@ -79,19 +119,16 @@ Prerequisites:
 - DNS for the chosen frontend hostname points at the k3s ingress node.
 - A real ACME contact email is configured with `certManager.issuer.email`.
 
-Enable HTTPS for the frontend Ingress:
+Enable HTTPS for the frontend Ingress by updating `infra/helm/marketpulse/values.yaml` or an Argo CD-managed values override:
 
-```sh
-helm upgrade --install marketpulse infra/helm/marketpulse \
-  --namespace marketpulse \
-  --create-namespace \
-  --set-string 'ingress.host=marketpulse.byhoon.co.kr' \
-  --set 'ingress.tls.enabled=true' \
-  --set-string 'ingress.tls.secretName=marketpulse-tls' \
-  --set-string 'ingress.tls.hosts[0]=marketpulse.byhoon.co.kr' \
-  --set 'certManager.issuer.enabled=true' \
-  --set-string 'certManager.issuer.name=letsencrypt-production' \
-  --set-string 'certManager.issuer.email=<your-email@example.com>'
+```yaml
+ingress:
+  tls:
+    enabled: true
+certManager:
+  issuer:
+    enabled: true
+    email: <your-email@example.com>
 ```
 
 After cert-manager issues the certificate, check the HTTPS endpoint:
@@ -103,18 +140,24 @@ curl -i "https://marketpulse.byhoon.co.kr/api/candles?symbol=BTCUSDT&interval=1m
 ```
 
 ## Rollback
-List Helm revisions:
+For a GitOps rollback, revert the pull request that changed the image tags, then let Argo CD sync the previous desired state:
 
 ```sh
-helm history marketpulse -n marketpulse
+git revert <deployment-handoff-commit>
 ```
 
-Roll back to a known-good revision:
+Then check sync and rollout:
 
 ```sh
-helm rollback marketpulse <revision> -n marketpulse
+argocd app sync marketpulse
+argocd app wait marketpulse --health --sync --timeout 300
 kubectl -n marketpulse rollout status deployment/backend
 kubectl -n marketpulse rollout status deployment/frontend
 ```
 
-Automated SSH or GitOps deployment remains deferred to infra TASK-09.
+If a cluster operator needs an emergency Helm rollback, run it from a trusted machine with cluster access and then reconcile Git so Argo CD does not reapply the bad desired state:
+
+```sh
+helm history marketpulse -n marketpulse
+helm rollback marketpulse <revision> -n marketpulse
+```

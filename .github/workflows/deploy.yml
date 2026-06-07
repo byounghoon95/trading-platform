@@ -1,0 +1,110 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Immutable Docker image tag to hand off, for example sha-c24ef53. Defaults to this workflow commit."
+        required: false
+        type: string
+  workflow_run:
+    workflows:
+      - Images
+    branches:
+      - main
+    types:
+      - completed
+
+concurrency:
+  group: deploy-marketpulse-gitops
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  VALUES_FILE: infra/helm/marketpulse/values.yaml
+
+jobs:
+  handoff:
+    name: Update GitOps image tags
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Resolve image tag
+        id: image-tag
+        env:
+          MANUAL_IMAGE_TAG: ${{ inputs.image_tag }}
+          SOURCE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+        run: |
+          set -euo pipefail
+
+          if [[ -n "${MANUAL_IMAGE_TAG}" ]]; then
+            image_tag="${MANUAL_IMAGE_TAG}"
+          else
+            image_tag="sha-${SOURCE_SHA:0:7}"
+          fi
+
+          if [[ ! "${image_tag}" =~ ^sha-[0-9a-fA-F]{7,40}$ ]]; then
+            echo "Image tag must be an immutable sha-* tag." >&2
+            exit 1
+          fi
+
+          echo "image_tag=${image_tag}" >> "${GITHUB_OUTPUT}"
+
+      - name: Update Helm values image tags
+        uses: mikefarah/yq@v4.44.3
+        env:
+          IMAGE_TAG: ${{ steps.image-tag.outputs.image_tag }}
+        with:
+          cmd: yq -i '.backend.image.tag = strenv(IMAGE_TAG) | .frontend.image.tag = strenv(IMAGE_TAG)' "${{ env.VALUES_FILE }}"
+
+      - name: Create deployment handoff pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: deploy/marketpulse-${{ steps.image-tag.outputs.image_tag }}
+          delete-branch: true
+          commit-message: "infra(infra): update marketpulse image tag"
+          title: "infra(infra-task-09): hand off ${{ steps.image-tag.outputs.image_tag }} to argocd"
+          body: |
+            ## Task
+
+            infra TASK-09 - docs/tasks/infra/09-k3s-deploy-automation.md
+
+            ## Summary
+
+            - Updates backend and frontend Helm image tags to `${{ steps.image-tag.outputs.image_tag }}`.
+            - Lets Argo CD sync the versioned Docker Hub images from the GitOps-managed chart values.
+
+            ## Why
+
+            This is the GitOps deployment handoff for a versioned MarketPulse release image.
+
+            ## Scope check
+
+            - [x] Every changed line traces directly to the task's Acceptance Criteria.
+            - [x] Nothing in the task's "Out of Scope" was touched.
+            - [x] No unrelated refactors, formatting, or "drive-by" cleanups.
+
+            ## Verification
+
+            - GitHub Actions resolved an immutable `sha-*` image tag.
+            - Argo CD sync and Kubernetes rollout checks run from the cluster after this PR is merged.
+
+            ## Docs
+
+            - [ ] Task file `## Status` updated and `## Completion Notes` appended. n/a: this handoff PR only changes release image tags.
+            - [ ] Relevant docs updated when applicable (`docs/spec.md`, track `AGENTS.md`, README, env vars, run/deploy commands). n/a: this handoff PR only changes release image tags.
+
+            ## Notes
+
+            This PR intentionally does not include cluster credentials and does not run SSH, `kubectl`, or `helm` against production k3s.
+          labels: |
+            deployment
+            infra

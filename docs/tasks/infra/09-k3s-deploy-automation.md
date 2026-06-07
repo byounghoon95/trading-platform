@@ -2,7 +2,7 @@
 
 ## Status
 
-todo
+done
 
 ## Goal
 
@@ -48,3 +48,11 @@ Formalize a GitOps deployment path where GitHub Actions publishes versioned imag
 - Validate the Argo CD `Application` manifest with `kubectl apply --dry-run=client`
 - `argocd app diff marketpulse` or `argocd app get marketpulse` when Argo CD is available
 - `kubectl rollout status deployment/<name> -n <namespace>` after Argo CD sync when a cluster is available
+
+## Completion Notes
+
+- Status: done
+- Skills used: implement-task
+- Changed: added a GitHub Actions deploy handoff workflow that updates Helm image tags in a pull request; added the Argo CD `Application` manifest; documented GitHub permissions, Argo CD assumptions, sync checks, rollout checks, and rollback; updated README and task index.
+- Verification: `/tmp/infra09-tools/actionlint .github/workflows/deploy.yml` -> passed; `/tmp/infra09-tools/helm lint infra/helm/marketpulse` -> passed; `/tmp/infra09-tools/helm template marketpulse infra/helm/marketpulse --namespace marketpulse` -> rendered 19 objects; `kubectl apply --dry-run=client --validate=false -f infra/argocd/marketpulse-application.yaml` -> failed because the local cluster context does not have the Argo CD `Application` CRD installed; `python3` YAML parse for deploy workflow, Argo CD manifest, and Helm values -> passed; `git diff --check` -> passed.
+- Notes: GitHub Actions does not store cluster credentials and does not run `kubectl`, `helm`, or SSH against production k3s. The workflow creates a GitOps PR; Argo CD applies the release after the PR is merged to `main`.
