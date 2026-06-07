@@ -64,7 +64,7 @@ ingress:
     traefik.ingress.kubernetes.io/router.entrypoints: web
   host: marketpulse.byhoon.co.kr
   tls:
-    enabled: false
+    enabled: true
     secretName: marketpulse-tls
     hosts:
       - marketpulse.byhoon.co.kr

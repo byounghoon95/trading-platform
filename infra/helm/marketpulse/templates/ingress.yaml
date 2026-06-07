@@ -3,6 +3,7 @@
 {{- if .Values.ingress.tls.enabled }}
 {{- $_ := set $annotations "cert-manager.io/cluster-issuer" .Values.certManager.issuer.name }}
 {{- $_ := set $annotations "traefik.ingress.kubernetes.io/router.entrypoints" "web,websecure" }}
+{{- $_ := set $annotations "traefik.ingress.kubernetes.io/router.tls" "true" }}
 {{- end }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
