@@ -56,3 +56,11 @@ Formalize a GitOps deployment path where GitHub Actions publishes versioned imag
 - Changed: added a GitHub Actions deploy handoff workflow that updates Helm image tags in a pull request; added the Argo CD `Application` manifest; documented GitHub permissions, Argo CD assumptions, sync checks, rollout checks, and rollback; updated README and task index.
 - Verification: `/tmp/infra09-tools/actionlint .github/workflows/deploy.yml` -> passed; `/tmp/infra09-tools/helm lint infra/helm/marketpulse` -> passed; `/tmp/infra09-tools/helm template marketpulse infra/helm/marketpulse --namespace marketpulse` -> rendered 19 objects; `kubectl apply --dry-run=client --validate=false -f infra/argocd/marketpulse-application.yaml` -> failed because the local cluster context does not have the Argo CD `Application` CRD installed; `python3` YAML parse for deploy workflow, Argo CD manifest, and Helm values -> passed; `git diff --check` -> passed.
 - Notes: GitHub Actions does not store cluster credentials and does not run `kubectl`, `helm`, or SSH against production k3s. The workflow creates a GitOps PR; Argo CD applies the release after the PR is merged to `main`.
+
+## Completion Notes
+
+- Status: done
+- Skills used: brainstorming, writing-plans
+- Changed: revised the deploy handoff workflow to commit Helm image tag updates directly to `main` after a successful image build; updated deployment docs and README to describe the automatic GitOps commit flow.
+- Verification: `docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.3 .github/workflows/deploy.yml` -> passed; `python3` YAML parse for deploy workflow and Helm values -> passed; `git diff --check` -> passed.
+- Notes: GitHub Actions still does not store cluster credentials and does not run `kubectl`, `helm`, or SSH against production k3s. Branch protection must allow the GitHub Actions token to push the generated image tag commit to `main`.

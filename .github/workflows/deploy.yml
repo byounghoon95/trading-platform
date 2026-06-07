@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       image_tag:
-        description: "Immutable Docker image tag to hand off, for example sha-c24ef53. Defaults to this workflow commit."
+        description: "Immutable Docker image tag to deploy, for example sha-c24ef53. Defaults to this workflow commit."
         required: false
         type: string
   workflow_run:
@@ -21,7 +21,6 @@ concurrency:
 
 permissions:
   contents: write
-  pull-requests: write
 
 env:
   VALUES_FILE: infra/helm/marketpulse/values.yaml
@@ -65,46 +64,20 @@ jobs:
         with:
           cmd: yq -i '.backend.image.tag = strenv(IMAGE_TAG) | .frontend.image.tag = strenv(IMAGE_TAG)' "${{ env.VALUES_FILE }}"
 
-      - name: Create deployment handoff pull request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          branch: deploy/marketpulse-${{ steps.image-tag.outputs.image_tag }}
-          delete-branch: true
-          commit-message: "infra(infra): update marketpulse image tag"
-          title: "infra(infra-task-09): hand off ${{ steps.image-tag.outputs.image_tag }} to argocd"
-          body: |
-            ## Task
+      - name: Commit GitOps image tags
+        env:
+          IMAGE_TAG: ${{ steps.image-tag.outputs.image_tag }}
+        run: |
+          set -euo pipefail
 
-            infra TASK-09 - docs/tasks/infra/09-k3s-deploy-automation.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-            ## Summary
+          if git diff --quiet -- "${VALUES_FILE}"; then
+            echo "Helm image tags already set to ${IMAGE_TAG}; nothing to commit."
+            exit 0
+          fi
 
-            - Updates backend and frontend Helm image tags to `${{ steps.image-tag.outputs.image_tag }}`.
-            - Lets Argo CD sync the versioned Docker Hub images from the GitOps-managed chart values.
-
-            ## Why
-
-            This is the GitOps deployment handoff for a versioned MarketPulse release image.
-
-            ## Scope check
-
-            - [x] Every changed line traces directly to the task's Acceptance Criteria.
-            - [x] Nothing in the task's "Out of Scope" was touched.
-            - [x] No unrelated refactors, formatting, or "drive-by" cleanups.
-
-            ## Verification
-
-            - GitHub Actions resolved an immutable `sha-*` image tag.
-            - Argo CD sync and Kubernetes rollout checks run from the cluster after this PR is merged.
-
-            ## Docs
-
-            - [ ] Task file `## Status` updated and `## Completion Notes` appended. n/a: this handoff PR only changes release image tags.
-            - [ ] Relevant docs updated when applicable (`docs/spec.md`, track `AGENTS.md`, README, env vars, run/deploy commands). n/a: this handoff PR only changes release image tags.
-
-            ## Notes
-
-            This PR intentionally does not include cluster credentials and does not run SSH, `kubectl`, or `helm` against production k3s.
-          labels: |
-            deployment
-            infra
+          git add "${VALUES_FILE}"
+          git commit -m "infra(infra): update marketpulse image tag"
+          git push origin HEAD:main
