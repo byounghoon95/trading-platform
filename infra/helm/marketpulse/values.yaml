@@ -1,29 +1,25 @@
 nameOverride: ""
 fullnameOverride: ""
-
 namespace:
   create: false
   name: marketpulse
-
 config:
   marketpulseEnv: production
   postgresDb: marketpulse
   postgresHost: postgres
   postgresPort: "5432"
   redisUrl: redis://redis:6379/0
-
 secrets:
   existingSecret: marketpulse-secrets
   create: false
   postgresUser: marketpulse
   postgresPassword: ""
   databaseUrl: ""
-
 backend:
   replicaCount: 1
   image:
     repository: leebyonghoon/marketpulse-backend
-    tag: sha-c182064 # Updated by the GitOps deploy handoff workflow.
+    tag: sha-0ecb630 # Updated by the GitOps deploy handoff workflow.
     pullPolicy: Always
   service:
     port: 8000
@@ -31,17 +27,15 @@ backend:
     prometheus.io/scrape: "true"
     prometheus.io/path: /metrics
     prometheus.io/port: "8000"
-
 frontend:
   replicaCount: 1
   image:
     repository: leebyonghoon/marketpulse-frontend
-    tag: sha-c182064 # Updated by the GitOps deploy handoff workflow.
+    tag: sha-0ecb630 # Updated by the GitOps deploy handoff workflow.
     pullPolicy: Always
   service:
     port: 80
   containerPort: 8080
-
 postgresql:
   enabled: true
   image:
@@ -55,7 +49,6 @@ postgresql:
     size: 1Gi
     accessModes:
       - ReadWriteOnce
-
 redis:
   enabled: true
   image:
@@ -64,7 +57,6 @@ redis:
     pullPolicy: IfNotPresent
   service:
     port: 6379
-
 ingress:
   enabled: true
   className: ""
@@ -76,7 +68,6 @@ ingress:
     secretName: marketpulse-tls
     hosts:
       - marketpulse.byhoon.co.kr
-
 certManager:
   issuer:
     enabled: false
@@ -85,7 +76,6 @@ certManager:
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretName: letsencrypt-production-account-key
     ingressClass: traefik
-
 monitoring:
   enabled: true
   prometheus:
