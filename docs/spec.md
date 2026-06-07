@@ -29,7 +29,7 @@ Primary signals:
 - Application can run locally with Docker Compose.
 - Application can be deployed to k3s with Helm.
 - CI/CD can test, build, and package the application.
-- Advanced CI/CD can push images and deploy or hand off to Helm release updates.
+- Advanced CI/CD can push images and hand versioned releases to Argo CD through GitOps-managed Helm values.
 - Basic operational health checks, logging, and troubleshooting documentation exist.
 - Advanced observability can show metrics and dashboards.
 
@@ -119,7 +119,7 @@ Advanced real-time behavior:
 - Readiness and liveness probes
 - GitHub Actions CI workflow
 - GitHub Actions image build workflow
-- Documented deployment workflow or GitOps handoff
+- Documented Argo CD GitOps deployment handoff
 
 ### Observability
 
@@ -137,8 +137,8 @@ Advanced observability:
 Advanced infrastructure:
 
 - HTTPS ingress with cert-manager
-- Automated image push and k3s deployment workflow
-- GitOps integration such as Argo CD
+- Automated image push and Argo CD GitOps deployment handoff
+- Argo CD application configuration for the Helm chart
 
 ## 5. Deliberately Out of Scope
 
@@ -317,7 +317,10 @@ GitHub Actions
   +--> lint/test
   +--> build Docker images
   +--> push images to registry
-  +--> deploy to k3s or update GitOps manifests
+  +--> update GitOps image tags
+        |
+        v
+      Argo CD syncs Helm release to k3s
 ```
 
 MVP CI/CD scope:
@@ -328,9 +331,9 @@ MVP CI/CD scope:
 
 Advanced CI/CD scope:
 
-- Push versioned images to GitHub Container Registry.
-- Deploy to k3s directly or update GitOps manifests.
-- Document required GitHub secrets and rollback steps.
+- Push versioned images to the configured container registry.
+- Update GitOps-managed Helm image tags for Argo CD rather than connecting from GitHub Actions to the cluster.
+- Document Argo CD cluster assumptions, sync behavior, required GitHub permissions or secrets, and rollback steps.
 
 ## 8. Key Technical Problems To Demonstrate
 
@@ -546,7 +549,7 @@ The `$requesting-code-review` skill should review the completed task against the
 - infra TASK-06: Add metrics endpoint and Prometheus scrape configuration
 - infra TASK-07: Add Grafana dashboard documentation or dashboard JSON
 - infra TASK-08: Add HTTPS ingress with cert-manager
-- infra TASK-09: Add k3s deployment automation
+- infra TASK-09: Add Argo CD deployment automation
 - infra TASK-10: Add PostgreSQL runtime
 - infra TASK-11: Replace k3s manifests with Helm
 
@@ -579,8 +582,8 @@ The portfolio version is done when:
 
 The advanced ops layer is done when:
 
-- Images can be pushed to GitHub Container Registry.
-- A documented or automated deployment path updates k3s.
+- Images can be pushed to the configured container registry.
+- Argo CD can update k3s from GitOps-managed Helm values.
 - HTTPS ingress is configured or clearly documented for the target cluster.
 - Metrics can be scraped by Prometheus or the integration is documented.
 - A Grafana dashboard or dashboard plan exists for the main operational signals.

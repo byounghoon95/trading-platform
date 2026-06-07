@@ -1,4 +1,4 @@
-# infra TASK-09: Add k3s Deploy Automation
+# infra TASK-09: Add Argo CD Deploy Automation
 
 ## Status
 
@@ -6,19 +6,21 @@ todo
 
 ## Goal
 
-Automate or clearly formalize deployment from GitHub Actions to the k3s cluster.
+Formalize a GitOps deployment path where GitHub Actions publishes versioned images and Argo CD deploys the Helm release to k3s.
 
 ## Scope
 
-- Choose SSH-based deployment or GitOps handoff
-- Document required GitHub secrets
-- Deploy versioned Docker Hub images to k3s through Helm
-- Add rollout and rollback commands
+- Use Argo CD as the deployment controller for k3s.
+- Add or document an Argo CD `Application` that tracks the MarketPulse Helm chart.
+- Update the GitHub Actions deployment handoff so it changes GitOps-managed Helm image tags instead of SSHing into the cluster.
+- Deploy versioned Docker Hub images by setting immutable `sha-*` tags in Helm values.
+- Document required GitHub permissions, optional secrets, Argo CD assumptions, sync checks, and rollback commands.
 - Keep the workflow understandable for portfolio review
 
 ## Files Expected To Change
 
 - `.github/workflows/deploy.yml`
+- `infra/argocd/marketpulse-application.yaml`
 - `infra/helm/marketpulse/values.yaml`
 - `docs/deployment.md`
 - `README.md`
@@ -27,17 +29,22 @@ Automate or clearly formalize deployment from GitHub Actions to the k3s cluster.
 
 - Do not require a cloud-managed Kubernetes service.
 - Do not store kubeconfig, SSH keys, or tokens in the repository.
-- Do not add Argo CD unless GitOps is selected for this task.
+- Do not make GitHub Actions connect directly to the k3s cluster over SSH.
+- Do not make GitHub Actions run `kubectl` or `helm` against the production cluster.
+- Do not automate Argo CD installation itself; document it as a cluster prerequisite.
 
 ## Acceptance Criteria
 
-- GitHub Actions can deploy or update the Helm release for k3s.
-- Required secrets and cluster assumptions are documented.
-- Rollback steps are documented.
-- Workflow does not expose credentials in logs.
+- GitHub Actions can hand off a versioned release by updating GitOps-managed Helm image tags.
+- Argo CD can sync the MarketPulse Helm chart into the `marketpulse` namespace.
+- Required GitHub permissions or secrets and Argo CD/k3s assumptions are documented.
+- Rollout, sync-status, and rollback steps are documented.
+- The workflow does not expose credentials in logs and does not require cluster credentials in GitHub Actions.
 
 ## Verification
 
 - Review GitHub Actions workflow syntax
 - `helm template marketpulse infra/helm/marketpulse --namespace marketpulse`
-- `kubectl rollout status deployment/<name> -n <namespace>` after deployment when a cluster is available
+- Validate the Argo CD `Application` manifest with `kubectl apply --dry-run=client`
+- `argocd app diff marketpulse` or `argocd app get marketpulse` when Argo CD is available
+- `kubectl rollout status deployment/<name> -n <namespace>` after Argo CD sync when a cluster is available
