@@ -13,7 +13,7 @@ Images:
 
 Tags:
 
-- `sha-<git-sha>` for immutable handoff deploys
+- `sha-<git-sha>` for immutable GitOps deploys
 - `latest` is pushed for compatibility, but Helm rollout should use immutable `sha-<git-sha>` tags.
 
 Required repository settings:
@@ -25,7 +25,7 @@ No production Kubernetes secrets are required for the image build workflow.
 
 ## GitOps Deploy Handoff
 
-The `Deploy` GitHub Actions workflow does not connect to the k3s cluster. It updates the backend and frontend image tags in `infra/helm/marketpulse/values.yaml` and opens a pull request. After that pull request is merged, Argo CD deploys the chart from `main`.
+The `Deploy` GitHub Actions workflow does not connect to the k3s cluster. It updates the backend and frontend image tags in `infra/helm/marketpulse/values.yaml` and commits that GitOps desired state directly to `main`. Argo CD then deploys the chart from `main`.
 
 Triggers:
 
@@ -36,7 +36,8 @@ The image tag must match `sha-<git-sha>`. If no manual tag is provided, the work
 
 Required GitHub repository settings:
 
-- `Actions > General > Workflow permissions`: allow GitHub Actions to create pull requests and write repository contents.
+- `Actions > General > Workflow permissions`: allow GitHub Actions to write repository contents.
+- Branch protection for `main` must allow the GitHub Actions token to push the image tag commit, or this workflow must be allowed to bypass the required pull request rule.
 - `DOCKERHUB_USERNAME`: used by the `Images` workflow, not by the deploy handoff.
 - `DOCKERHUB_TOKEN`: used by the `Images` workflow, not by the deploy handoff.
 
@@ -84,7 +85,7 @@ Do not commit real database passwords. `infra/helm/marketpulse/values.secret.exa
 
 ## Argo CD Rollout
 
-After the deploy handoff pull request is merged, Argo CD sees the updated `sha-*` tags in `values.yaml`. Sync the app if automated sync has not already applied it:
+After the deploy workflow commits updated `sha-*` tags to `values.yaml`, Argo CD sees the GitOps change on `main`. Sync the app if automated sync has not already applied it:
 
 ```sh
 argocd app sync marketpulse
@@ -140,7 +141,7 @@ curl -i "https://marketpulse.byhoon.co.kr/api/candles?symbol=BTCUSDT&interval=1m
 ```
 
 ## Rollback
-For a GitOps rollback, revert the pull request that changed the image tags, then let Argo CD sync the previous desired state:
+For a GitOps rollback, revert the commit that changed the image tags, then let Argo CD sync the previous desired state:
 
 ```sh
 git revert <deployment-handoff-commit>
