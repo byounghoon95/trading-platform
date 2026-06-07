@@ -7,6 +7,7 @@ import { PricePanel } from './PricePanel'
 import { SymbolSelector } from './SymbolSelector'
 
 const DEFAULT_INTERVAL = '1m'
+const CANDLE_REFRESH_MS = 10000
 const TICKER_REFRESH_MS = 3000
 const TICKER_STALE_MS = 15000
 
@@ -95,10 +96,23 @@ export function Dashboard() {
 
     const controller = new AbortController()
 
-    async function loadCandles() {
-      setIsCandlesLoading(true)
+    let isRefreshingCandles = false
+
+    async function loadCandles({ resetData = false, showLoading = false } = {}) {
+      if (isRefreshingCandles) {
+        return
+      }
+
+      isRefreshingCandles = true
+
+      if (showLoading) {
+        setIsCandlesLoading(true)
+      }
       setCandlesError('')
-      setCandles([])
+
+      if (resetData) {
+        setCandles([])
+      }
 
       try {
         const candleResponse = await listCandles({
@@ -109,20 +123,23 @@ export function Dashboard() {
         setCandles(candleResponse.map(normalizeCandle))
       } catch (error) {
         if (!controller.signal.aborted) {
-          setCandles([])
           setCandlesError(error.message)
         }
       } finally {
+        isRefreshingCandles = false
+
         if (!controller.signal.aborted) {
           setIsCandlesLoading(false)
         }
       }
     }
 
-    loadCandles()
+    loadCandles({ resetData: true, showLoading: true })
+    const refreshId = window.setInterval(loadCandles, CANDLE_REFRESH_MS)
 
     return () => {
       controller.abort()
+      window.clearInterval(refreshId)
     }
   }, [selectedInterval, selectedSymbol])
 
@@ -231,13 +248,13 @@ export function Dashboard() {
         {candlesError ? (
           <div className="chart-state chart-state--error">{candlesError}</div>
         ) : null}
-        {!candlesError && isCandlesLoading ? (
+        {isCandlesLoading ? (
           <div className="chart-state">Loading market data</div>
         ) : null}
         {!candlesError && !isCandlesLoading && !hasCandles ? (
           <div className="chart-state">No candle data</div>
         ) : null}
-        {!candlesError && hasCandles ? <CandleChart candles={candles} /> : null}
+        {hasCandles ? <CandleChart candles={candles} /> : null}
       </section>
 
       {tickerError ? (
