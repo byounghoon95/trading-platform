@@ -6,6 +6,8 @@ React frontend와 FastAPI backend로 구성했고, Docker image를 빌드한 뒤
 
 또한 개발 과정에서는 AI를 코드 초안 작성, 반복 수정, 테스트 보강, 문서 정리에 사용했습니다. 단순히 AI가 만든 코드를 그대로 반영하지 않고, task 단위로 범위를 나눈 뒤 diff 확인, lint/test/build 결과 확인, 배포 설정 검토를 거쳐 변경을 관리했습니다.
 
+![MarketPulse Dashboard](docs/assets/marketpulse-main.JPG)
+
 ## 아키텍처
 
 ![MarketPulse Architecture](docs/assets/architecture.svg)
@@ -42,9 +44,9 @@ Backend /metrics
 
 ### GitOps 기반 배포 흐름
 
-배포는 GitHub Actions가 cluster에 직접 접속하지 않는 구조로 구성했습니다. Actions workflow는 backend/frontend image를 build하고 Docker Hub에 push한 뒤, Helm values에 `sha-*` image tag를 기록합니다.
+배포는 GitHub Actions와 Argo CD를 이용한 GitOps 방식으로 구성했습니다. Actions workflow가 backend/frontend image를 build하고 Docker Hub에 push한 뒤, Helm values에 `sha-*` image tag를 기록합니다.
 
-이후 Argo CD가 Git repository의 Helm chart를 바라보고 k3s cluster 상태를 동기화합니다. 이 방식은 배포 이력을 Git commit으로 추적할 수 있고, cluster의 실제 상태를 Git의 desired state와 맞추기 쉽습니다.
+Argo CD는 Git repository의 Helm chart 변경을 기준으로 k3s cluster 상태를 동기화합니다. 이 방식은 배포 이력을 Git commit으로 추적할 수 있고, 실제 배포된 image tag와 Git에 기록된 desired state를 맞추기 쉽습니다.
 
 ### Helm 기반 k3s runtime
 
