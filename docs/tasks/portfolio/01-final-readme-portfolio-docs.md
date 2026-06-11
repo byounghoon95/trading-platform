@@ -2,7 +2,7 @@
 
 ## Status
 
-todo
+done
 
 ## Goal
 
@@ -51,3 +51,11 @@ Create the final README and portfolio-ready documentation.
 ## Verification
 
 - Manual documentation review
+
+## Completion Notes
+
+- Status: done
+- Skills used: implement-task
+- Changed: expanded the root README into a deployment-focused portfolio guide; added `docs/assets/architecture.svg`; added `docs/architecture.md`; rewrote `docs/deployment.md` as a GitOps/k3s deployment runbook; rewrote `docs/operations.md` as a day-2 operations and troubleshooting guide; updated the task index.
+- Verification: manual documentation review -> passed; `python3` repository link check for Markdown links -> passed; `rg` placeholder scan for task documentation -> passed; `git diff --check` -> passed.
+- Notes: README was later tightened to remove document-link hub content, emphasize deployment and AI-assisted development, and embed `docs/assets/architecture.svg` as the current architecture diagram.
